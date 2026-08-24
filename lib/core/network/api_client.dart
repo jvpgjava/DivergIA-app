@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/secure_token_storage.dart';
 import 'api_config.dart';
@@ -60,3 +61,7 @@ class ApiClient {
     }
   }
 }
+
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient(tokenStorage: ref.watch(secureTokenStorageProvider));
+});

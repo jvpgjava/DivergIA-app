@@ -47,27 +47,31 @@ class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
 
 void main() {
   late SecureTokenStorage storage;
+  final expiraEm = DateTime.utc(2030, 1, 1);
 
   setUp(() {
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
     storage = SecureTokenStorage();
   });
 
-  test('deveRetornarNuloQuandoNenhumTokenFoiSalvo', () async {
+  test('deveRetornarNuloQuandoNenhumaSessaoFoiSalva', () async {
     expect(await storage.readAccessToken(), isNull);
+    expect(await storage.readExpiraEm(), isNull);
   });
 
-  test('deveSalvarELerOTokenDeAcesso', () async {
-    await storage.saveAccessToken('token-abc');
+  test('deveSalvarELerOTokenDeAcessoEAExpiracao', () async {
+    await storage.saveSession(accessToken: 'token-abc', expiraEm: expiraEm);
 
     expect(await storage.readAccessToken(), 'token-abc');
+    expect(await storage.readExpiraEm(), expiraEm);
   });
 
-  test('deveLimparOTokenSalvo', () async {
-    await storage.saveAccessToken('token-abc');
+  test('deveLimparASessaoSalva', () async {
+    await storage.saveSession(accessToken: 'token-abc', expiraEm: expiraEm);
 
     await storage.clear();
 
     expect(await storage.readAccessToken(), isNull);
+    expect(await storage.readExpiraEm(), isNull);
   });
 }

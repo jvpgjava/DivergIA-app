@@ -8,16 +8,16 @@ void main() {
   runApp(const ProviderScope(child: DivergiaApp()));
 }
 
-class DivergiaApp extends StatelessWidget {
+class DivergiaApp extends ConsumerWidget {
   const DivergiaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'DivergIA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      routerConfig: buildAppRouter(),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }
