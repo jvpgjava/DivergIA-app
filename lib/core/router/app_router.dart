@@ -11,6 +11,7 @@ import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/analysis/data/models/trecho_deriva.dart';
 import '../../features/history/presentation/history_screen.dart';
+import '../../features/history/presentation/tendencia_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/rewrite/presentation/rewrite_suggestion_screen.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -70,6 +71,13 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
       path: '/historico',
       builder: (context, state) =>
           const AppShell(tab: AppNavTab.historico, child: HistoryScreen()),
+    ),
+    GoRoute(
+      // Precisa vir ANTES de `/historico/:id` — senão o go_router casaria
+      // "tendencia" como o `:id` e abriria o resultado de uma análise
+      // inexistente em vez desta tela.
+      path: '/historico/tendencia',
+      builder: (context, state) => const TendenciaScreen(),
     ),
     GoRoute(
       path: '/historico/:id',

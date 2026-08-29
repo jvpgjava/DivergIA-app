@@ -93,4 +93,41 @@ void main() {
 
     verify(() => client.delete<void>('/api/historico')).called(1);
   });
+
+  test('tendenciaDeveChamarOEndpointEMapearOPainel', () async {
+    when(
+      () => client.get<Map<String, dynamic>>('/api/historico/tendencia'),
+    ).thenAnswer(
+      (_) async => _resposta({
+        'totalAnalises': 5,
+        'totalDerivas': 8,
+        'intensidadeMedia': 0.42,
+        'derivasPorTipo': {'SENTIDO': 5, 'POSICAO': 2, 'INTENSIDADE': 1},
+        'evolucaoMensal': [
+          {
+            'mes': '2026-07',
+            'quantidadeAnalises': 2,
+            'quantidadeDerivas': 3,
+            'intensidadeMedia': 0.3,
+          },
+          {
+            'mes': '2026-08',
+            'quantidadeAnalises': 3,
+            'quantidadeDerivas': 5,
+            'intensidadeMedia': 0.5,
+          },
+        ],
+      }),
+    );
+
+    final painel = await historicoApi.tendencia();
+
+    expect(painel.totalAnalises, 5);
+    expect(painel.totalDerivas, 8);
+    expect(painel.intensidadeMedia, 0.42);
+    expect(painel.derivasPorTipo['SENTIDO'], 5);
+    expect(painel.evolucaoMensal, hasLength(2));
+    expect(painel.evolucaoMensal.first.mes, '2026-07');
+    expect(painel.evolucaoMensal.last.intensidadeMedia, 0.5);
+  });
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../analysis/data/models/resultado_analise.dart';
 import 'models/analise_resumo.dart';
+import 'models/painel_tendencia.dart';
 
 /// Chamadas HTTP do histórico — espelha `HistoricoController` do backend
 /// (`/api/historico`).
@@ -26,6 +27,13 @@ class HistoricoApi {
   }
 
   Future<void> excluirTudo() => _client.delete<void>('/api/historico');
+
+  Future<PainelTendencia> tendencia() async {
+    final response = await _client.get<Map<String, dynamic>>(
+      '/api/historico/tendencia',
+    );
+    return PainelTendencia.fromJson(response.data!);
+  }
 }
 
 final historicoApiProvider = Provider<HistoricoApi>((ref) {

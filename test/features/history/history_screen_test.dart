@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockHistoricoApi extends Mock implements HistoricoApi {}
@@ -34,6 +35,10 @@ void main() {
         GoRoute(
           path: '/historico',
           builder: (context, state) => const HistoryScreen(),
+        ),
+        GoRoute(
+          path: '/historico/tendencia',
+          builder: (context, state) => const Text('tela de tendência'),
         ),
         GoRoute(
           path: '/historico/:id',
@@ -109,5 +114,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('detalhe abc-123'), findsOneWidget);
+  });
+
+  testWidgets('deveNavegarParaOPainelDeTendenciaAoTocarNoIcone', (
+    tester,
+  ) async {
+    when(() => api.listar()).thenAnswer((_) async => []);
+
+    await tester.pumpWidget(buildApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(LucideIcons.trendingUp));
+    await tester.pumpAndSettle();
+
+    expect(find.text('tela de tendência'), findsOneWidget);
   });
 }

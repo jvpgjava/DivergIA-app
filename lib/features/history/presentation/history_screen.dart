@@ -58,19 +58,41 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
-              child: Column(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Minhas análises',
-                    style: AppTypography.titleMedium(
-                      context,
-                    ).copyWith(fontSize: 22),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Minhas análises',
+                          style: AppTypography.titleMedium(
+                            context,
+                          ).copyWith(fontSize: 22),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Histórico de comparações de sentido',
+                          style: AppTypography.body(context),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Histórico de comparações de sentido',
-                    style: AppTypography.body(context),
+                  const SizedBox(width: 12),
+                  InkWell(
+                    onTap: () => context.push('/historico/tendencia'),
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: context.colors.background,
+                        border: Border.all(color: context.colors.border),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(LucideIcons.trendingUp, size: 18),
+                    ),
                   ),
                 ],
               ),
