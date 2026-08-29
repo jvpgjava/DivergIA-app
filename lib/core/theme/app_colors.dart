@@ -32,6 +32,10 @@ abstract final class AppColors {
   static const Color scoreBaixoBg = Color(0xFFD1FAE5);
   static const Color scoreBaixoFg = Color(0xFF10B981);
 
+  // Explanation-Banner do resultado da análise — Figma: "analysis-results".
+  static const Color explanationBannerBg = Color(0xFFFFEBE6);
+  static const Color explanationBannerFg = Color(0xFFD9381E);
+
   static const LinearGradient primaryButtonGradient = LinearGradient(
     begin: Alignment(-0.15, -1),
     end: Alignment(0.15, 1),

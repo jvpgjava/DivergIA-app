@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/analysis/presentation/analysis_result_screen.dart';
 import '../../features/analysis/presentation/new_analysis_screen.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
@@ -8,7 +9,6 @@ import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/session_controller.dart';
 import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
-import '../../features/history/presentation/analysis_detail_screen.dart';
 import '../../features/history/presentation/history_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -72,7 +72,7 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
     GoRoute(
       path: '/historico/:id',
       builder: (context, state) =>
-          AnalysisDetailScreen(analiseId: state.pathParameters['id']!),
+          AnalysisResultScreen(analiseId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: '/perfil',
