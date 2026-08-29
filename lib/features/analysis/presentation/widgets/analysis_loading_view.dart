@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 
@@ -51,6 +52,7 @@ class _AnalysisLoadingViewState extends State<AnalysisLoadingView> {
   @override
   Widget build(BuildContext context) {
     final passoAtual = _passoAtual;
+    final colors = context.colors;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
@@ -69,24 +71,23 @@ class _AnalysisLoadingViewState extends State<AnalysisLoadingView> {
                   child: CircularProgressIndicator(
                     value: _percentual / 100,
                     strokeWidth: 6,
-                    backgroundColor: AppColors.border,
+                    backgroundColor: colors.border,
                     valueColor: const AlwaysStoppedAnimation(AppColors.primary),
                   ),
                 ),
                 Container(
                   width: 100,
                   height: 100,
-                  decoration: const BoxDecoration(
-                    color: AppColors.background,
+                  decoration: BoxDecoration(
+                    color: colors.background,
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: Text(
                     '$_percentual%',
-                    style: AppTypography.displayLarge.copyWith(
-                      fontSize: 20,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTypography.displayLarge(
+                      context,
+                    ).copyWith(fontSize: 20, color: AppColors.primary),
                   ),
                 ),
               ],
@@ -95,13 +96,13 @@ class _AnalysisLoadingViewState extends State<AnalysisLoadingView> {
           const SizedBox(height: 40),
           Text(
             'Analisando seus textos...',
-            style: AppTypography.titleMedium.copyWith(fontSize: 20),
+            style: AppTypography.titleMedium(context).copyWith(fontSize: 20),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             'Comparando sentido e identificando divergências',
-            style: AppTypography.body,
+            style: AppTypography.body(context),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
@@ -109,8 +110,8 @@ class _AnalysisLoadingViewState extends State<AnalysisLoadingView> {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.surfaceInput,
-              border: Border.all(color: AppColors.border),
+              color: colors.surfaceInput,
+              border: Border.all(color: colors.border),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -147,9 +148,10 @@ class _PassoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final Color corTexto = switch (estado) {
-      _EstadoPasso.pendente => AppColors.textSecondary,
-      _ => AppColors.textPrimary,
+      _EstadoPasso.pendente => colors.textSecondary,
+      _ => colors.textPrimary,
     };
     final FontWeight peso = estado == _EstadoPasso.emAndamento
         ? FontWeight.w600
@@ -162,8 +164,8 @@ class _PassoRow extends StatelessWidget {
           height: 24,
           child: switch (estado) {
             _EstadoPasso.concluido => Container(
-              decoration: const BoxDecoration(
-                color: AppColors.primaryTint,
+              decoration: BoxDecoration(
+                color: colors.primaryTint,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -183,8 +185,8 @@ class _PassoRow extends StatelessWidget {
               child: Container(
                 width: 6,
                 height: 6,
-                decoration: const BoxDecoration(
-                  color: AppColors.border,
+                decoration: BoxDecoration(
+                  color: colors.border,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -195,11 +197,9 @@ class _PassoRow extends StatelessWidget {
         Expanded(
           child: Text(
             texto,
-            style: AppTypography.body.copyWith(
-              fontSize: 14,
-              color: corTexto,
-              fontWeight: peso,
-            ),
+            style: AppTypography.body(
+              context,
+            ).copyWith(fontSize: 14, color: corTexto, fontWeight: peso),
           ),
         ),
       ],

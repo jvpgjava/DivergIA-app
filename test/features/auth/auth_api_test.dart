@@ -127,4 +127,31 @@ void main() {
 
     verify(() => client.post<void>('/api/auth/logout')).called(1);
   });
+
+  test('meDeveChamarOEndpointCertoEMapearOUsuarioLogado', () async {
+    when(() => client.get<Map<String, dynamic>>('/api/auth/me')).thenAnswer(
+      (_) async => _jsonResponse({
+        'id': 'abc-123',
+        'nome': 'Ana Clara',
+        'email': 'ana@example.com',
+        'criadoEm': '2026-01-01T10:00:00.000Z',
+      }),
+    );
+
+    final usuario = await authApi.me();
+
+    expect(usuario.id, 'abc-123');
+    expect(usuario.nome, 'Ana Clara');
+    expect(usuario.email, 'ana@example.com');
+  });
+
+  test('excluirContaDeveChamarOEndpointCorreto', () async {
+    when(() => client.delete<void>('/api/auth/conta')).thenAnswer(
+      (_) async => Response(requestOptions: RequestOptions(path: '/qualquer')),
+    );
+
+    await authApi.excluirConta();
+
+    verify(() => client.delete<void>('/api/auth/conta')).called(1);
+  });
 }

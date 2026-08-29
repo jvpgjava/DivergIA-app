@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
@@ -16,6 +17,7 @@ class HistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pontuacao = analise.pontuacaoIntensidade;
+    final colors = context.colors;
 
     return InkWell(
       onTap: onTap,
@@ -24,8 +26,8 @@ class HistoryCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.background,
-          border: Border.all(color: AppColors.border),
+          color: colors.background,
+          border: Border.all(color: colors.border),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -40,14 +42,14 @@ class HistoryCard extends StatelessWidget {
                     children: [
                       Text(
                         rotuloTipoDesvio(analise.tipoDesvioPrincipal),
-                        style: AppTypography.cardTitle,
+                        style: AppTypography.cardTitle(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         formatarDataRelativa(analise.criadoEm),
-                        style: AppTypography.caption,
+                        style: AppTypography.caption(context),
                       ),
                     ],
                   ),
@@ -61,10 +63,9 @@ class HistoryCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               analise.textoPreview ?? 'Texto não salvo (histórico não retido).',
-              style: AppTypography.body.copyWith(
-                color: AppColors.textLabel,
-                height: 1.5,
-              ),
+              style: AppTypography.body(
+                context,
+              ).copyWith(color: colors.textLabel, height: 1.5),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -78,14 +79,14 @@ class HistoryCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryTint,
+                    color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     pontuacao != null
                         ? 'Divergência Analisada'
                         : 'Sem detalhes salvos',
-                    style: AppTypography.caption.copyWith(
+                    style: AppTypography.caption(context).copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                       fontSize: 11,
@@ -97,7 +98,7 @@ class HistoryCard extends StatelessWidget {
                   children: [
                     Text(
                       'Ver detalhes',
-                      style: AppTypography.caption.copyWith(
+                      style: AppTypography.caption(context).copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
                       ),
@@ -126,7 +127,7 @@ class _ScoreBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = corDaPontuacao(pontuacao);
+    final cor = corDaPontuacao(context, pontuacao);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(

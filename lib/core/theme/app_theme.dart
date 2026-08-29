@@ -1,53 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import 'app_color_tokens.dart';
 import 'app_colors.dart';
-import 'app_typography.dart';
 
 /// Tema base do app, construído a partir dos tokens extraídos do Figma
-/// (ver [AppColors] e [AppTypography]) — nenhuma tela deve declarar cor ou
-/// fonte "solta", sempre via [ThemeData]/[Theme.of(context)].
+/// (ver [AppColors]/[AppColorTokens] e [AppTypography]) — nenhuma tela deve
+/// declarar cor ou fonte "solta", sempre via `context.colors`/
+/// `AppTypography.xxx(context)`.
 abstract final class AppTheme {
-  static ThemeData get light {
+  static ThemeData get light => _build(AppColorTokens.light, Brightness.light);
+
+  static ThemeData get dark => _build(AppColorTokens.dark, Brightness.dark);
+
+  static ThemeData _build(AppColorTokens tokens, Brightness brightness) {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.primary,
-      brightness: Brightness.light,
+      brightness: brightness,
       primary: AppColors.primary,
       onPrimary: Colors.white,
-      surface: AppColors.background,
-      onSurface: AppColors.textPrimary,
+      surface: tokens.background,
+      onSurface: tokens.textPrimary,
       error: AppColors.danger,
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: brightness,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.background,
-      fontFamily: AppTypography.body.fontFamily,
+      scaffoldBackgroundColor: tokens.background,
+      fontFamily: GoogleFonts.inter().fontFamily,
+      extensions: [tokens],
       textTheme: TextTheme(
-        displayLarge: AppTypography.displayLarge,
-        titleLarge: AppTypography.titleLarge,
-        titleMedium: AppTypography.titleMedium,
-        labelLarge: AppTypography.label,
-        bodyLarge: AppTypography.bodyEmphasis,
-        bodyMedium: AppTypography.body,
-        bodySmall: AppTypography.caption,
+        displayLarge: GoogleFonts.sora(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: tokens.textPrimary,
+        ),
+        titleLarge: GoogleFonts.sora(
+          fontSize: 23,
+          fontWeight: FontWeight.w700,
+          color: tokens.textPrimary,
+        ),
+        titleMedium: GoogleFonts.sora(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: tokens.textPrimary,
+        ),
+        labelLarge: GoogleFonts.sora(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: tokens.textLabel,
+        ),
+        bodyLarge: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: tokens.textPrimary,
+        ),
+        bodyMedium: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: tokens.textSecondary,
+        ),
+        bodySmall: GoogleFonts.inter(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: tokens.textSecondary,
+        ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surfaceInput,
+        fillColor: tokens.surfaceInput,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 15,
         ),
-        hintStyle: AppTypography.body,
+        hintStyle: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: tokens.textSecondary,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: tokens.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: tokens.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -58,13 +97,17 @@ abstract final class AppTheme {
           borderSide: const BorderSide(color: AppColors.danger),
         ),
       ),
-      dividerColor: AppColors.border,
+      dividerColor: tokens.border,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.background,
+        backgroundColor: tokens.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: AppColors.textPrimary,
-        titleTextStyle: AppTypography.titleMedium,
+        foregroundColor: tokens.textPrimary,
+        titleTextStyle: GoogleFonts.sora(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: tokens.textPrimary,
+        ),
       ),
     );
   }

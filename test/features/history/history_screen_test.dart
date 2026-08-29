@@ -1,4 +1,5 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/history/data/historico_api.dart';
 import 'package:divergia_app/features/history/data/models/analise_resumo.dart';
 import 'package:divergia_app/features/history/presentation/history_screen.dart';
@@ -43,7 +44,7 @@ void main() {
     );
     return ProviderScope(
       overrides: [historicoApiProvider.overrideWithValue(api)],
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
 

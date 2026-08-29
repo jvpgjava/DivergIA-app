@@ -1,5 +1,7 @@
 import 'package:divergia_app/core/theme/app_colors.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/core/utils/deriva_formatting.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -38,18 +40,36 @@ void main() {
   });
 
   group('corDaPontuacao', () {
-    test('deveSerVermelhoParaPontuacaoAltaMaiorOuIgualA60', () {
-      final cor = corDaPontuacao(72);
+    Future<({Color bg, Color fg})> corPara(WidgetTester tester, int pontuacao) async {
+      late ({Color bg, Color fg}) resultado;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light,
+          home: Builder(
+            builder: (context) {
+              resultado = corDaPontuacao(context, pontuacao);
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+      return resultado;
+    }
+
+    testWidgets('deveSerVermelhoParaPontuacaoAltaMaiorOuIgualA60', (
+      tester,
+    ) async {
+      final cor = await corPara(tester, 72);
       expect(cor.fg, AppColors.scoreAltoFg);
     });
 
-    test('deveSerAmareloParaPontuacaoMediaEntre30E59', () {
-      final cor = corDaPontuacao(45);
+    testWidgets('deveSerAmareloParaPontuacaoMediaEntre30E59', (tester) async {
+      final cor = await corPara(tester, 45);
       expect(cor.fg, AppColors.scoreMedioFg);
     });
 
-    test('deveSerVerdeParaPontuacaoBaixaMenorQue30', () {
-      final cor = corDaPontuacao(18);
+    testWidgets('deveSerVerdeParaPontuacaoBaixaMenorQue30', (tester) async {
+      final cor = await corPara(tester, 18);
       expect(cor.fg, AppColors.scoreBaixoFg);
     });
   });

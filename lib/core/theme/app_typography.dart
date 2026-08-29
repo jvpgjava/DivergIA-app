@@ -1,40 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
+import 'app_color_tokens.dart';
 
 /// Escala tipográfica extraída do protótipo Figma: títulos em Sora
 /// (ExtraBold/SemiBold), corpo/rótulos em Inter (Regular/Medium/SemiBold).
+///
+/// A maioria dos estilos recebe `context` porque a cor (texto
+/// primário/secundário) muda entre claro e escuro — só [scoreBadge] e
+/// [buttonText] não mudam (cor sempre definida por quem usa, ou fixa em
+/// branco sobre botão colorido).
 abstract final class AppTypography {
-  static TextStyle get displayLarge => GoogleFonts.sora(
+  static TextStyle displayLarge(BuildContext context) => GoogleFonts.sora(
     fontSize: 28,
     fontWeight: FontWeight.w800,
-    color: AppColors.textPrimary,
+    color: context.colors.textPrimary,
   );
 
-  static TextStyle get titleLarge => GoogleFonts.sora(
+  static TextStyle titleLarge(BuildContext context) => GoogleFonts.sora(
     fontSize: 23,
     fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
+    color: context.colors.textPrimary,
   );
 
-  static TextStyle get titleMedium => GoogleFonts.sora(
+  static TextStyle titleMedium(BuildContext context) => GoogleFonts.sora(
     fontSize: 20,
     fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
+    color: context.colors.textPrimary,
   );
 
-  static TextStyle get label => GoogleFonts.sora(
+  static TextStyle label(BuildContext context) => GoogleFonts.sora(
     fontSize: 13,
     fontWeight: FontWeight.w600,
-    color: AppColors.textLabel,
+    color: context.colors.textLabel,
   );
 
   /// Título de card (ex: "History-Card" do histórico) — Sora Bold 15.
-  static TextStyle get cardTitle => GoogleFonts.sora(
+  static TextStyle cardTitle(BuildContext context) => GoogleFonts.sora(
     fontSize: 15,
     fontWeight: FontWeight.w700,
-    color: AppColors.textPrimary,
+    color: context.colors.textPrimary,
   );
 
   /// Texto do Score-Badge — Sora Bold 12, cor definida por quem usa.
@@ -47,27 +52,27 @@ abstract final class AppTypography {
     color: Colors.white,
   );
 
-  static TextStyle get body => GoogleFonts.inter(
+  static TextStyle body(BuildContext context) => GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: context.colors.textSecondary,
   );
 
-  static TextStyle get bodyEmphasis => GoogleFonts.inter(
+  static TextStyle bodyEmphasis(BuildContext context) => GoogleFonts.inter(
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
+    color: context.colors.textPrimary,
   );
 
-  static TextStyle get caption => GoogleFonts.inter(
+  static TextStyle caption(BuildContext context) => GoogleFonts.inter(
     fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: AppColors.textSecondary,
+    color: context.colors.textSecondary,
   );
 
-  static TextStyle get navLabel => GoogleFonts.inter(
+  static TextStyle navLabel(BuildContext context) => GoogleFonts.inter(
     fontSize: 11,
     fontWeight: FontWeight.w600,
-    color: AppColors.textSecondary,
+    color: context.colors.textSecondary,
   );
 }

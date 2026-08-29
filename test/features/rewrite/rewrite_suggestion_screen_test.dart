@@ -1,4 +1,5 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/analysis/data/models/trecho_deriva.dart';
 import 'package:divergia_app/features/rewrite/data/rewrite_api.dart';
 import 'package:divergia_app/features/rewrite/presentation/rewrite_suggestion_screen.dart';
@@ -48,7 +49,7 @@ void main() {
     );
     return ProviderScope(
       overrides: [rewriteApiProvider.overrideWithValue(api)],
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
 

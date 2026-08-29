@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/network/api_exception.dart';
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
@@ -55,7 +56,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.screenBackground,
+      backgroundColor: context.colors.screenBackground,
       body: SafeArea(
         child: FutureBuilder<ResultadoAnalise>(
           future: _futuro,
@@ -80,7 +81,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                       Text(
                         mensagem,
                         textAlign: TextAlign.center,
-                        style: AppTypography.body,
+                        style: AppTypography.body(context),
                       ),
                       const SizedBox(height: 16),
                       TextButton(
@@ -112,7 +113,9 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                     const SizedBox(width: 4),
                     Text(
                       'Resultado da análise',
-                      style: AppTypography.titleMedium.copyWith(fontSize: 20),
+                      style: AppTypography.titleMedium(
+                        context,
+                      ).copyWith(fontSize: 20),
                     ),
                   ],
                 ),
@@ -124,7 +127,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                       resultado.trechos.length,
                       principal?.pontuacao,
                     ),
-                    style: AppTypography.body,
+                    style: AppTypography.body(context),
                   ),
                 ),
                 const SizedBox(height: 16),

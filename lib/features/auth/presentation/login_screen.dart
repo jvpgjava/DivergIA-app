@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/app_text_field.dart';
@@ -58,11 +59,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Bem-vindo', style: AppTypography.displayLarge),
+                Text('Bem-vindo', style: AppTypography.displayLarge(context)),
                 const SizedBox(height: 8),
                 Text(
                   'Entre na sua conta para analisar a integridade do seu conteúdo.',
-                  style: AppTypography.body,
+                  style: AppTypography.body(context),
                 ),
                 const SizedBox(height: 32),
                 AppTextField(
@@ -94,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     onPressed: () => context.push('/esqueci-senha'),
                     child: Text(
                       'Esqueci minha senha',
-                      style: AppTypography.body.copyWith(
+                      style: AppTypography.body(context).copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w500,
                       ),
@@ -105,7 +106,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 8),
                   Text(
                     loginState.errorMessage!,
-                    style: AppTypography.body.copyWith(color: AppColors.danger),
+                    style: AppTypography.body(
+                      context,
+                    ).copyWith(color: AppColors.danger),
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -117,15 +120,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 24),
                 Row(
                   children: [
-                    const Expanded(child: Divider(color: AppColors.border)),
+                    Expanded(child: Divider(color: context.colors.border)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
                         'ou continue com',
-                        style: AppTypography.caption,
+                        style: AppTypography.caption(context),
                       ),
                     ),
-                    const Expanded(child: Divider(color: AppColors.border)),
+                    Expanded(child: Divider(color: context.colors.border)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -153,12 +156,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: WrapAlignment.center,
                   spacing: 4,
                   children: [
-                    Text('Não tem uma conta?', style: AppTypography.body),
+                    Text(
+                      'Não tem uma conta?',
+                      style: AppTypography.body(context),
+                    ),
                     GestureDetector(
                       onTap: () => context.push('/signup'),
                       child: Text(
                         'Criar conta',
-                        style: AppTypography.body.copyWith(
+                        style: AppTypography.body(context).copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -194,17 +200,19 @@ class _SocialButton extends StatelessWidget {
       child: Container(
         height: 48,
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: AppColors.textPrimary),
+            Icon(icon, size: 18, color: context.colors.textPrimary),
             const SizedBox(width: 8),
             Text(
               label,
-              style: AppTypography.bodyEmphasis.copyWith(fontSize: 14),
+              style: AppTypography.bodyEmphasis(
+                context,
+              ).copyWith(fontSize: 14),
             ),
           ],
         ),

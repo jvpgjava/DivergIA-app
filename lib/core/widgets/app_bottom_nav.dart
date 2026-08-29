@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_color_tokens.dart';
 import '../theme/app_typography.dart';
 
 enum AppNavTab { historico, perfil }
@@ -25,10 +25,11 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: colors.background,
+        border: Border(top: BorderSide(color: colors.border)),
       ),
       child: SafeArea(
         top: false,
@@ -75,7 +76,8 @@ class _NavTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? AppColors.textPrimary : AppColors.textSecondary;
+    final colors = context.colors;
+    final color = active ? colors.textPrimary : colors.textSecondary;
     return InkWell(
       onTap: onTap,
       customBorder: const StadiumBorder(),
@@ -86,7 +88,10 @@ class _NavTab extends StatelessWidget {
           children: [
             Icon(icon, size: 22, color: color),
             const SizedBox(height: 4),
-            Text(label, style: AppTypography.navLabel.copyWith(color: color)),
+            Text(
+              label,
+              style: AppTypography.navLabel(context).copyWith(color: color),
+            ),
           ],
         ),
       ),
@@ -107,8 +112,8 @@ class _AddButton extends StatelessWidget {
       child: Container(
         width: 48,
         height: 48,
-        decoration: const BoxDecoration(
-          color: AppColors.textPrimary,
+        decoration: BoxDecoration(
+          color: context.colors.highContrastSurface,
           shape: BoxShape.circle,
         ),
         child: const Icon(LucideIcons.plus, size: 24, color: Colors.white),

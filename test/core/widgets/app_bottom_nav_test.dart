@@ -1,3 +1,4 @@
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/core/widgets/app_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,6 +14,7 @@ void main() {
   }) {
     return tester.pumpWidget(
       MaterialApp(
+        theme: AppTheme.light,
         home: Scaffold(
           bottomNavigationBar: AppBottomNav(
             selected: selected,

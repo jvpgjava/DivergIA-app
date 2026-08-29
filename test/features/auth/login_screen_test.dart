@@ -1,4 +1,5 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
 import 'package:divergia_app/features/auth/presentation/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -78,7 +79,7 @@ void main() {
     );
     return ProviderScope(
       overrides: [authApiProvider.overrideWithValue(authApi)],
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
 

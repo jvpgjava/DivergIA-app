@@ -37,6 +37,13 @@ class AuthApi {
 
   Future<void> logout() => _client.post<void>('/api/auth/logout');
 
+  Future<Usuario> me() async {
+    final response = await _client.get<Map<String, dynamic>>('/api/auth/me');
+    return Usuario.fromJson(response.data!);
+  }
+
+  Future<void> excluirConta() => _client.delete<void>('/api/auth/conta');
+
   Future<void> recuperarSenha(String email) =>
       _client.post<void>('/api/auth/recuperar-senha', data: {'email': email});
 

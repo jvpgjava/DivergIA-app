@@ -24,6 +24,8 @@ class HistoricoApi {
     );
     return ResultadoAnalise.fromJson(response.data!);
   }
+
+  Future<void> excluirTudo() => _client.delete<void>('/api/historico');
 }
 
 final historicoApiProvider = Provider<HistoricoApi>((ref) {

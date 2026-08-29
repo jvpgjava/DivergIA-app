@@ -1,4 +1,5 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/analysis/data/analise_api.dart';
 import 'package:divergia_app/features/analysis/data/models/resultado_analise.dart';
 import 'package:divergia_app/features/analysis/presentation/new_analysis_screen.dart';
@@ -34,7 +35,7 @@ void main() {
     );
     return ProviderScope(
       overrides: [analiseApiProvider.overrideWithValue(api)],
-      child: MaterialApp.router(routerConfig: router),
+      child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_color_tokens.dart';
 import '../theme/app_colors.dart';
 
 const _meses = [
@@ -64,15 +65,18 @@ NivelSeveridade nivelDeSeveridade(int pontuacao) {
   return NivelSeveridade.baixa;
 }
 
-/// Cores do Score-Badge do Figma — variam com a severidade (0-100).
-({Color bg, Color fg}) corDaPontuacao(int pontuacao) {
+/// Cores do Score-Badge do Figma — variam com a severidade (0-100) e com o
+/// tema (o fundo pastel do claro vira o próprio tom em baixa opacidade no
+/// escuro, por isso precisa do `context`).
+({Color bg, Color fg}) corDaPontuacao(BuildContext context, int pontuacao) {
+  final colors = context.colors;
   switch (nivelDeSeveridade(pontuacao)) {
     case NivelSeveridade.alta:
-      return (bg: AppColors.scoreAltoBg, fg: AppColors.scoreAltoFg);
+      return (bg: colors.scoreAltoBg, fg: AppColors.scoreAltoFg);
     case NivelSeveridade.media:
-      return (bg: AppColors.scoreMedioBg, fg: AppColors.scoreMedioFg);
+      return (bg: colors.scoreMedioBg, fg: AppColors.scoreMedioFg);
     case NivelSeveridade.baixa:
-      return (bg: AppColors.scoreBaixoBg, fg: AppColors.scoreBaixoFg);
+      return (bg: colors.scoreBaixoBg, fg: AppColors.scoreBaixoFg);
   }
 }
 

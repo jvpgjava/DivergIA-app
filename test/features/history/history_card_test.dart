@@ -1,3 +1,4 @@
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/history/data/models/analise_resumo.dart';
 import 'package:divergia_app/features/history/presentation/widgets/history_card.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        theme: AppTheme.light,
         home: Scaffold(
           body: HistoryCard(analise: analise, onTap: () {}),
         ),
@@ -44,6 +46,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        theme: AppTheme.light,
         home: Scaffold(
           body: HistoryCard(analise: analise, onTap: () {}),
         ),
@@ -68,6 +71,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        theme: AppTheme.light,
         home: Scaffold(
           body: HistoryCard(analise: analise, onTap: () => tocou = true),
         ),

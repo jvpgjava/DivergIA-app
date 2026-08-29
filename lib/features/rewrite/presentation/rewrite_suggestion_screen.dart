@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../analysis/data/models/trecho_deriva.dart';
@@ -44,6 +45,7 @@ class _RewriteSuggestionScreenState
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(rewriteControllerProvider(widget.trecho.id));
+    final colors = context.colors;
 
     if (!_textoInicializado && state.sugestao != null) {
       _sugestaoController.text = state.sugestao!;
@@ -51,7 +53,7 @@ class _RewriteSuggestionScreenState
     }
 
     return Scaffold(
-      backgroundColor: AppColors.screenBackground,
+      backgroundColor: colors.screenBackground,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
@@ -65,7 +67,9 @@ class _RewriteSuggestionScreenState
                 const SizedBox(width: 4),
                 Text(
                   'Sugestão de reescrita',
-                  style: AppTypography.titleMedium.copyWith(fontSize: 22),
+                  style: AppTypography.titleMedium(
+                    context,
+                  ).copyWith(fontSize: 22),
                 ),
               ],
             ),
@@ -73,7 +77,7 @@ class _RewriteSuggestionScreenState
               padding: const EdgeInsets.only(left: 12),
               child: Text(
                 'Fidelidade e polidez combinadas',
-                style: AppTypography.body,
+                style: AppTypography.body(context),
               ),
             ),
             const SizedBox(height: 20),
@@ -92,7 +96,7 @@ class _RewriteSuggestionScreenState
                     Text(
                       state.errorMessage!,
                       textAlign: TextAlign.center,
-                      style: AppTypography.body,
+                      style: AppTypography.body(context),
                     ),
                     const SizedBox(height: 16),
                     TextButton(
@@ -111,7 +115,10 @@ class _RewriteSuggestionScreenState
             else ...[
               _ContextCard(trechoOriginal: widget.trecho.trechoOriginal),
               const SizedBox(height: 20),
-              Text('Alternativa recomendada', style: AppTypography.cardTitle),
+              Text(
+                'Alternativa recomendada',
+                style: AppTypography.cardTitle(context),
+              ),
               const SizedBox(height: 12),
               // `Border` não suporta `borderRadius` com cores não uniformes
               // por lado — por isso o acento azul à esquerda é uma faixa
@@ -122,21 +129,23 @@ class _RewriteSuggestionScreenState
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(width: 4, child: ColoredBox(color: AppColors.primary)),
+                      const SizedBox(
+                        width: 4,
+                        child: ColoredBox(color: AppColors.primary),
+                      ),
                       Expanded(
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.background,
-                            border: Border.all(color: AppColors.border),
+                            color: colors.background,
+                            border: Border.all(color: colors.border),
                           ),
                           child: TextField(
                             controller: _sugestaoController,
                             maxLines: null,
-                            style: AppTypography.body.copyWith(
-                              color: AppColors.textPrimary,
-                              height: 1.5,
-                            ),
+                            style: AppTypography.body(
+                              context,
+                            ).copyWith(color: colors.textPrimary, height: 1.5),
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                               isDense: true,
@@ -157,12 +166,15 @@ class _RewriteSuggestionScreenState
                     child: OutlinedButton(
                       onPressed: () => context.pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textSecondary,
-                        side: const BorderSide(color: AppColors.border),
+                        foregroundColor: colors.textSecondary,
+                        side: BorderSide(color: colors.border),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: const StadiumBorder(),
                       ),
-                      child: Text('Descartar', style: AppTypography.label),
+                      child: Text(
+                        'Descartar',
+                        style: AppTypography.label(context),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -186,7 +198,7 @@ class _RewriteSuggestionScreenState
               Text(
                 'Esta é uma estimativa heurística apoiada em IA.',
                 textAlign: TextAlign.center,
-                style: AppTypography.caption,
+                style: AppTypography.caption(context),
               ),
             ],
           ],
@@ -203,11 +215,12 @@ class _ContextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surfaceInput,
+        color: colors.surfaceInput,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -215,18 +228,16 @@ class _ContextCard extends StatelessWidget {
         children: [
           Text(
             'TRECHO ORIGINAL ALTERADO',
-            style: AppTypography.caption.copyWith(
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.4,
-            ),
+            style: AppTypography.caption(
+              context,
+            ).copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.4),
           ),
           const SizedBox(height: 8),
           Text(
             '"$trechoOriginal"',
-            style: AppTypography.bodyEmphasis.copyWith(
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-            ),
+            style: AppTypography.bodyEmphasis(
+              context,
+            ).copyWith(fontStyle: FontStyle.italic, fontWeight: FontWeight.w400),
           ),
         ],
       ),
@@ -241,11 +252,12 @@ class _InsightBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.primaryTint,
+        color: colors.primaryTint,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -253,12 +265,16 @@ class _InsightBox extends StatelessWidget {
         children: [
           Text(
             'Por que esta alternativa?',
-            style: AppTypography.cardTitle.copyWith(color: AppColors.primary),
+            style: AppTypography.cardTitle(
+              context,
+            ).copyWith(color: AppColors.primary),
           ),
           const SizedBox(height: 6),
           Text(
             explicacao,
-            style: AppTypography.body.copyWith(color: AppColors.textLabel),
+            style: AppTypography.body(
+              context,
+            ).copyWith(color: colors.textLabel),
           ),
         ],
       ),

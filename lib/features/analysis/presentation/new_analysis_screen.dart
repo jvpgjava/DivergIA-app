@@ -123,12 +123,14 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                   children: [
                     Text(
                       'Nova análise',
-                      style: AppTypography.titleMedium.copyWith(fontSize: 22),
+                      style: AppTypography.titleMedium(
+                        context,
+                      ).copyWith(fontSize: 22),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Identifique alterações feitas pela IA',
-                      style: AppTypography.body,
+                      style: AppTypography.body(context),
                     ),
                     const SizedBox(height: 16),
                     AnaliseInputField(
@@ -156,9 +158,9 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                       const SizedBox(height: 16),
                       Text(
                         state.errorMessage!,
-                        style: AppTypography.body.copyWith(
-                          color: AppColors.danger,
-                        ),
+                        style: AppTypography.body(
+                          context,
+                        ).copyWith(color: AppColors.danger),
                       ),
                     ],
                     const SizedBox(height: 20),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
@@ -25,6 +26,7 @@ class TrechoResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -39,14 +41,17 @@ class TrechoResultCard extends StatelessWidget {
           child: OutlinedButton(
             onPressed: onSugerirReescrita,
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.textPrimary,
-              side: const BorderSide(color: AppColors.border),
+              foregroundColor: colors.textPrimary,
+              side: BorderSide(color: colors.border),
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(26),
               ),
             ),
-            child: Text('Sugerir reescrita fiel', style: AppTypography.label),
+            child: Text(
+              'Sugerir reescrita fiel',
+              style: AppTypography.label(context),
+            ),
           ),
         ),
       ],
@@ -62,12 +67,13 @@ class _Painel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        border: Border.all(color: AppColors.border),
+        color: colors.background,
+        border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -75,15 +81,14 @@ class _Painel extends StatelessWidget {
         children: [
           Text(
             rotulo,
-            style: AppTypography.caption.copyWith(
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-            ),
+            style: AppTypography.caption(
+              context,
+            ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 0.4),
           ),
           const SizedBox(height: 6),
           Text(
             texto,
-            style: AppTypography.bodyEmphasis.copyWith(
+            style: AppTypography.bodyEmphasis(context).copyWith(
               color: AppColors.explanationBannerFg,
               decoration: TextDecoration.underline,
               decorationColor: AppColors.explanationBannerFg,
@@ -106,7 +111,7 @@ class _ExplanationBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.explanationBannerBg,
+        color: context.colors.explanationBannerBg,
         border: Border.all(color: AppColors.explanationBannerFg),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -125,16 +130,16 @@ class _ExplanationBanner extends StatelessWidget {
               children: [
                 Text(
                   rotuloTipoDesvio(trecho.tipoDesvio),
-                  style: AppTypography.cardTitle.copyWith(
-                    color: AppColors.explanationBannerFg,
-                  ),
+                  style: AppTypography.cardTitle(
+                    context,
+                  ).copyWith(color: AppColors.explanationBannerFg),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   trecho.explicacao,
-                  style: AppTypography.body.copyWith(
-                    color: AppColors.explanationBannerFg,
-                  ),
+                  style: AppTypography.body(
+                    context,
+                  ).copyWith(color: AppColors.explanationBannerFg),
                 ),
               ],
             ),

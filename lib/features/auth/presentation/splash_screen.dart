@@ -21,7 +21,7 @@ class SplashScreen extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('DivergIA', style: AppTypography.displayLarge),
+            Text('DivergIA', style: AppTypography.displayLarge(context)),
             const SizedBox(height: 24),
             const CircularProgressIndicator(color: AppColors.primary),
           ],

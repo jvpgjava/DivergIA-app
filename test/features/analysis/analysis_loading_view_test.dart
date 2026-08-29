@@ -1,3 +1,4 @@
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/analysis/presentation/widgets/analysis_loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,7 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('deveMostrarOsTresPassosEOPercentualInicial', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: AnalysisLoadingView())),
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const Scaffold(body: AnalysisLoadingView()),
+      ),
     );
 
     expect(find.textContaining('%'), findsOneWidget);
@@ -24,7 +28,10 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(home: Scaffold(body: AnalysisLoadingView())),
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const Scaffold(body: AnalysisLoadingView()),
+      ),
     );
 
     expect(find.text('4%'), findsOneWidget);

@@ -1,4 +1,5 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/analysis/data/models/resultado_analise.dart';
 import 'package:divergia_app/features/analysis/data/models/trecho_deriva.dart';
 import 'package:divergia_app/features/analysis/presentation/analysis_result_screen.dart';
@@ -20,8 +21,9 @@ void main() {
   Widget buildApp() {
     return ProviderScope(
       overrides: [historicoApiProvider.overrideWithValue(api)],
-      child: const MaterialApp(
-        home: AnalysisResultScreen(analiseId: 'abc-123'),
+      child: MaterialApp(
+        theme: AppTheme.light,
+        home: const AnalysisResultScreen(analiseId: 'abc-123'),
       ),
     );
   }

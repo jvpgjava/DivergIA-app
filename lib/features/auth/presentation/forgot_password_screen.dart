@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/app_text_field.dart';
@@ -56,7 +57,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceInput,
+                        color: context.colors.surfaceInput,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(LucideIcons.chevronLeft, size: 16),
@@ -67,18 +68,20 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               const SizedBox(height: 24),
               Text(
                 'Esqueci minha senha',
-                style: AppTypography.displayLarge.copyWith(fontSize: 24),
+                style: AppTypography.displayLarge(
+                  context,
+                ).copyWith(fontSize: 24),
               ),
               const SizedBox(height: 6),
               Text(
                 'Informe seu e-mail e enviaremos um código para redefinir sua senha.',
-                style: AppTypography.body,
+                style: AppTypography.body(context),
               ),
               const SizedBox(height: 24),
               if (state.enviado)
                 Text(
                   'Se esse e-mail estiver cadastrado, você vai receber um código em instantes.',
-                  style: AppTypography.bodyEmphasis,
+                  style: AppTypography.bodyEmphasis(context),
                 )
               else
                 Form(
@@ -101,7 +104,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 const SizedBox(height: 8),
                 Text(
                   state.errorMessage!,
-                  style: AppTypography.body.copyWith(color: AppColors.danger),
+                  style: AppTypography.body(
+                    context,
+                  ).copyWith(color: AppColors.danger),
                 ),
               ],
               const SizedBox(height: 20),

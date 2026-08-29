@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import 'historico_controller.dart';
@@ -51,7 +52,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final state = ref.watch(historicoControllerProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.screenBackground,
+      backgroundColor: context.colors.screenBackground,
       body: SafeArea(
         child: Column(
           children: [
@@ -62,12 +63,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 children: [
                   Text(
                     'Minhas análises',
-                    style: AppTypography.titleMedium.copyWith(fontSize: 22),
+                    style: AppTypography.titleMedium(
+                      context,
+                    ).copyWith(fontSize: 22),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Histórico de comparações de sentido',
-                    style: AppTypography.body,
+                    style: AppTypography.body(context),
                   ),
                 ],
               ),
@@ -81,16 +84,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       height: 44,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        color: AppColors.background,
-                        border: Border.all(color: AppColors.border),
+                        color: context.colors.background,
+                        border: Border.all(color: context.colors.border),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             LucideIcons.search,
                             size: 16,
-                            color: AppColors.textSecondary,
+                            color: context.colors.textSecondary,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
@@ -99,9 +102,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               onChanged: (valor) => ref
                                   .read(historicoControllerProvider.notifier)
                                   .buscar(valor),
-                              style: AppTypography.body.copyWith(
-                                color: AppColors.textPrimary,
-                              ),
+                              style: AppTypography.body(
+                                context,
+                              ).copyWith(color: context.colors.textPrimary),
                               decoration: const InputDecoration(
                                 isDense: true,
                                 border: InputBorder.none,
@@ -121,8 +124,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: AppColors.background,
-                        border: Border.all(color: AppColors.border),
+                        color: context.colors.background,
+                        border: Border.all(color: context.colors.border),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -135,14 +138,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            Expanded(child: _buildConteudo(state)),
+            Expanded(child: _buildConteudo(context, state)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildConteudo(HistoricoState state) {
+  Widget _buildConteudo(BuildContext context, HistoricoState state) {
     if (state.loading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
@@ -159,7 +162,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               Text(
                 state.errorMessage!,
                 textAlign: TextAlign.center,
-                style: AppTypography.body,
+                style: AppTypography.body(context),
               ),
               const SizedBox(height: 16),
               TextButton(
@@ -184,7 +187,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 ? 'Nenhuma análise ainda. Toque em "+" para começar.'
                 : 'Nenhuma análise encontrada para essa busca.',
             textAlign: TextAlign.center,
-            style: AppTypography.body,
+            style: AppTypography.body(context),
           ),
         ),
       );

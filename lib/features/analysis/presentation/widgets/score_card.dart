@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
 
@@ -18,14 +18,15 @@ class ScoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cor = corDaPontuacao(pontuacao);
+    final cor = corDaPontuacao(context, pontuacao);
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,12 +40,14 @@ class ScoreCard extends StatelessWidget {
                 CircularProgressIndicator(
                   value: pontuacao / 100,
                   strokeWidth: 6,
-                  backgroundColor: AppColors.border,
+                  backgroundColor: colors.border,
                   valueColor: AlwaysStoppedAnimation<Color>(cor.fg),
                 ),
                 Text(
                   '$pontuacao',
-                  style: AppTypography.titleMedium.copyWith(fontSize: 16),
+                  style: AppTypography.titleMedium(
+                    context,
+                  ).copyWith(fontSize: 16),
                 ),
               ],
             ),
@@ -56,10 +59,13 @@ class ScoreCard extends StatelessWidget {
               children: [
                 Text(
                   tituloBriefing(tipoDesvio, pontuacao),
-                  style: AppTypography.cardTitle,
+                  style: AppTypography.cardTitle(context),
                 ),
                 const SizedBox(height: 4),
-                Text(descricaoBriefing(tipoDesvio), style: AppTypography.body),
+                Text(
+                  descricaoBriefing(tipoDesvio),
+                  style: AppTypography.body(context),
+                ),
               ],
             ),
           ),

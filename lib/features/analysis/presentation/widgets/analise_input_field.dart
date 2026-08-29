@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../data/models/arquivo_selecionado.dart';
@@ -34,19 +35,25 @@ class AnaliseInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: AppTypography.cardTitle.copyWith(fontSize: 14)),
+            Text(
+              label,
+              style: AppTypography.cardTitle(context).copyWith(fontSize: 14),
+            ),
             if (arquivo == null)
               ValueListenableBuilder<TextEditingValue>(
                 valueListenable: controller,
                 builder: (context, value, _) => Text(
                   '${value.text.length} / $_limiteCaracteres caract.',
-                  style: AppTypography.caption.copyWith(fontSize: 11),
+                  style: AppTypography.caption(
+                    context,
+                  ).copyWith(fontSize: 11),
                 ),
               )
             else
@@ -63,7 +70,7 @@ class AnaliseInputField extends StatelessWidget {
                     const SizedBox(width: 2),
                     Text(
                       'Remover arquivo',
-                      style: AppTypography.caption.copyWith(
+                      style: AppTypography.caption(context).copyWith(
                         color: AppColors.danger,
                         fontSize: 11,
                       ),
@@ -82,9 +89,9 @@ class AnaliseInputField extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.surfaceInput,
+              color: colors.surfaceInput,
               border: Border.all(
-                color: errorText != null ? AppColors.danger : AppColors.border,
+                color: errorText != null ? AppColors.danger : colors.border,
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -95,13 +102,14 @@ class AnaliseInputField extends StatelessWidget {
                   maxLines: null,
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
-                  style: AppTypography.body.copyWith(
-                    fontSize: 13,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTypography.body(
+                    context,
+                  ).copyWith(fontSize: 13, color: colors.textPrimary),
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: AppTypography.body.copyWith(fontSize: 13),
+                    hintStyle: AppTypography.body(
+                      context,
+                    ).copyWith(fontSize: 13),
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: const EdgeInsets.only(right: 28),
@@ -113,12 +121,12 @@ class AnaliseInputField extends StatelessWidget {
                   child: InkWell(
                     onTap: onAnexar,
                     borderRadius: BorderRadius.circular(14),
-                    child: const Padding(
-                      padding: EdgeInsets.all(4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
                       child: Icon(
                         LucideIcons.paperclip,
                         size: 18,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),
@@ -130,7 +138,9 @@ class AnaliseInputField extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             errorText!,
-            style: AppTypography.caption.copyWith(color: AppColors.danger),
+            style: AppTypography.caption(
+              context,
+            ).copyWith(color: AppColors.danger),
           ),
         ],
       ],
@@ -145,12 +155,13 @@ class _ArquivoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceInput,
-        border: Border.all(color: AppColors.border),
+        color: colors.surfaceInput,
+        border: Border.all(color: colors.border),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -160,7 +171,9 @@ class _ArquivoCard extends StatelessWidget {
           Expanded(
             child: Text(
               arquivo.nome,
-              style: AppTypography.bodyEmphasis.copyWith(fontSize: 13),
+              style: AppTypography.bodyEmphasis(
+                context,
+              ).copyWith(fontSize: 13),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

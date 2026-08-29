@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_color_tokens.dart';
 import '../theme/app_typography.dart';
 
 /// Campo de texto com rótulo acima e caixa abaixo (Figma: "Input-Box"),
@@ -38,16 +38,16 @@ class _AppTextFieldState extends State<AppTextField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: AppTypography.label),
+        Text(widget.label, style: AppTypography.label(context)),
         const SizedBox(height: 8),
         TextFormField(
           controller: widget.controller,
           obscureText: _obscured,
           keyboardType: widget.keyboardType,
           validator: widget.validator,
-          style: AppTypography.bodyEmphasis.copyWith(
-            fontWeight: FontWeight.w400,
-          ),
+          style: AppTypography.bodyEmphasis(
+            context,
+          ).copyWith(fontWeight: FontWeight.w400),
           decoration: InputDecoration(
             hintText: widget.hint,
             errorText: widget.errorText,
@@ -56,7 +56,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     icon: Icon(
                       _obscured ? LucideIcons.eye : LucideIcons.eyeOff,
                       size: 18,
-                      color: AppColors.textSecondary,
+                      color: context.colors.textSecondary,
                     ),
                     onPressed: () => setState(() => _obscured = !_obscured),
                   )

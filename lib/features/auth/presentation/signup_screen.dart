@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/app_checkbox.dart';
@@ -74,7 +75,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceInput,
+                          color: context.colors.surfaceInput,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Icon(LucideIcons.chevronLeft, size: 16),
@@ -83,19 +84,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     const SizedBox(width: 12),
                     Text(
                       'Criar nova conta',
-                      style: AppTypography.titleMedium.copyWith(fontSize: 18),
+                      style: AppTypography.titleMedium(
+                        context,
+                      ).copyWith(fontSize: 18),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
                 Text(
                   'Junte-se à DivergIA',
-                  style: AppTypography.displayLarge.copyWith(fontSize: 24),
+                  style: AppTypography.displayLarge(
+                    context,
+                  ).copyWith(fontSize: 24),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Analise e corrija os desvios de sentido criados por revisões de IAs.',
-                  style: AppTypography.body,
+                  style: AppTypography.body(context),
                 ),
                 const SizedBox(height: 24),
                 AppTextField(
@@ -161,7 +166,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     Expanded(
                       child: Text.rich(
                         TextSpan(
-                          style: AppTypography.caption.copyWith(fontSize: 13),
+                          style: AppTypography.caption(
+                            context,
+                          ).copyWith(fontSize: 13),
                           children: [
                             const TextSpan(text: 'Li e concordo com os '),
                             TextSpan(
@@ -190,16 +197,18 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   const SizedBox(height: 6),
                   Text(
                     'É preciso aceitar os termos para continuar.',
-                    style: AppTypography.caption.copyWith(
-                      color: AppColors.danger,
-                    ),
+                    style: AppTypography.caption(
+                      context,
+                    ).copyWith(color: AppColors.danger),
                   ),
                 ],
                 if (signupState.errorMessage != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     signupState.errorMessage!,
-                    style: AppTypography.body.copyWith(color: AppColors.danger),
+                    style: AppTypography.body(
+                      context,
+                    ).copyWith(color: AppColors.danger),
                   ),
                 ],
                 const SizedBox(height: 20),
@@ -213,12 +222,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   alignment: WrapAlignment.center,
                   spacing: 4,
                   children: [
-                    Text('Já tem cadastro?', style: AppTypography.body),
+                    Text(
+                      'Já tem cadastro?',
+                      style: AppTypography.body(context),
+                    ),
                     GestureDetector(
                       onTap: () => context.pop(),
                       child: Text(
                         'Fazer login',
-                        style: AppTypography.body.copyWith(
+                        style: AppTypography.body(context).copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),

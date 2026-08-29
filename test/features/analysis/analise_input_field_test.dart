@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/analysis/data/models/arquivo_selecionado.dart';
 import 'package:divergia_app/features/analysis/presentation/widgets/analise_input_field.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ void main() {
     VoidCallback? onRemoverArquivo,
   }) {
     return MaterialApp(
+      theme: AppTheme.light,
       home: Scaffold(
         body: AnaliseInputField(
           label: 'Texto original',

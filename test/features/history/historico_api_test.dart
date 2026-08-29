@@ -83,4 +83,14 @@ void main() {
     expect(resultado.trechos.first.intensidade, 0.72);
     expect(resultado.trechos.first.tipoDesvio, 'SENTIDO');
   });
+
+  test('excluirTudoDeveChamarOEndpointCorreto', () async {
+    when(() => client.delete<void>('/api/historico')).thenAnswer(
+      (_) async => _resposta(null),
+    );
+
+    await historicoApi.excluirTudo();
+
+    verify(() => client.delete<void>('/api/historico')).called(1);
+  });
 }
