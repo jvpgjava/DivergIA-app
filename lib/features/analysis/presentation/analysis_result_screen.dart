@@ -9,6 +9,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
 import '../../history/data/historico_api.dart';
 import '../data/models/resultado_analise.dart';
+import '../data/models/trecho_deriva.dart';
 import 'widgets/score_card.dart';
 import 'widgets/trecho_result_card.dart';
 
@@ -44,9 +45,10 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
     );
   }
 
-  void _avisarReescritaEmBreve() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sugestão de reescrita ainda não disponível.')),
+  void _abrirSugestaoDeReescrita(TrechoDeriva trecho) {
+    context.push(
+      '/historico/${widget.analiseId}/trechos/${trecho.id}/reescrita',
+      extra: trecho,
     );
   }
 
@@ -135,7 +137,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                   const SizedBox(height: 16),
                   TrechoResultCard(
                     trecho: trecho,
-                    onSugerirReescrita: _avisarReescritaEmBreve,
+                    onSugerirReescrita: () => _abrirSugestaoDeReescrita(trecho),
                   ),
                 ],
               ],

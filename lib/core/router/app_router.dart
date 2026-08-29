@@ -9,8 +9,10 @@ import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/session_controller.dart';
 import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
+import '../../features/analysis/data/models/trecho_deriva.dart';
 import '../../features/history/presentation/history_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/rewrite/presentation/rewrite_suggestion_screen.dart';
 import '../widgets/app_bottom_nav.dart';
 import 'app_shell.dart';
 
@@ -73,6 +75,11 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
       path: '/historico/:id',
       builder: (context, state) =>
           AnalysisResultScreen(analiseId: state.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/historico/:id/trechos/:trechoId/reescrita',
+      builder: (context, state) =>
+          RewriteSuggestionScreen(trecho: state.extra as TrechoDeriva),
     ),
     GoRoute(
       path: '/perfil',
