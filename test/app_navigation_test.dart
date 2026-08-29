@@ -3,11 +3,13 @@ import 'package:divergia_app/core/storage/secure_token_storage.dart';
 import 'package:divergia_app/core/theme/app_colors.dart';
 import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/auth/presentation/session_controller.dart';
+import 'package:divergia_app/features/history/data/historico_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:mocktail/mocktail.dart';
 
 /// Nunca toca o `flutter_secure_storage` real (que exigiria mockar o
 /// platform channel) — o status de sessão é setado direto pelo teste.
@@ -21,12 +23,21 @@ class _FakeSessionController extends SessionController {
   Future<void> checkSession() async {}
 }
 
+class _MockHistoricoApi extends Mock implements HistoricoApi {}
+
 void main() {
   late GoRouter router;
+  late _MockHistoricoApi historicoApi;
+
+  setUp(() {
+    historicoApi = _MockHistoricoApi();
+    when(() => historicoApi.listar()).thenAnswer((_) async => []);
+  });
 
   Widget buildApp(SessionStatus status) {
     router = buildAppRouter(_FakeSessionController(status));
     return ProviderScope(
+      overrides: [historicoApiProvider.overrideWithValue(historicoApi)],
       child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
@@ -56,7 +67,7 @@ void main() {
     await tester.pumpWidget(buildApp(SessionStatus.authenticated));
     await tester.pumpAndSettle();
 
-    expect(find.text('Histórico'), findsWidgets);
+    expect(find.text('Minhas análises'), findsOneWidget);
   });
 
   testWidgets('deveRedirecionarParaLoginAoTentarAbrirRotaProtegidaDeslogado', (
@@ -80,7 +91,7 @@ void main() {
     router.go('/login');
     await tester.pumpAndSettle();
 
-    expect(find.text('Histórico'), findsWidgets);
+    expect(find.text('Minhas análises'), findsOneWidget);
   });
 
   testWidgets('deveNavegarDeLoginParaCriarConta', (tester) async {
@@ -97,7 +108,7 @@ void main() {
     await tester.pumpWidget(buildApp(SessionStatus.authenticated));
     await tester.pumpAndSettle();
 
-    expect(find.text('Histórico'), findsWidgets);
+    expect(find.text('Minhas análises'), findsOneWidget);
 
     await tester.tap(find.text('Perfil'));
     await tester.pumpAndSettle();

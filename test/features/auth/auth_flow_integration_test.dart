@@ -2,6 +2,7 @@ import 'package:divergia_app/core/widgets/app_checkbox.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
 import 'package:divergia_app/features/auth/data/models/token_acesso.dart';
 import 'package:divergia_app/features/auth/data/models/usuario.dart';
+import 'package:divergia_app/features/history/data/historico_api.dart';
 import 'package:divergia_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockAuthApi extends Mock implements AuthApi {}
+
+class _MockHistoricoApi extends Mock implements HistoricoApi {}
 
 /// Guarda estado de verdade (em memória) — usado pra simular "reiniciar o
 /// app" mantendo o que o `flutter_secure_storage` teria persistido de fato
@@ -56,15 +59,21 @@ class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
 
 void main() {
   late _MockAuthApi authApi;
+  late _MockHistoricoApi historicoApi;
 
   setUp(() {
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
     authApi = _MockAuthApi();
+    historicoApi = _MockHistoricoApi();
+    when(() => historicoApi.listar()).thenAnswer((_) async => []);
   });
 
   Widget buildRealApp() {
     return ProviderScope(
-      overrides: [authApiProvider.overrideWithValue(authApi)],
+      overrides: [
+        authApiProvider.overrideWithValue(authApi),
+        historicoApiProvider.overrideWithValue(historicoApi),
+      ],
       child: const DivergiaApp(),
     );
   }
@@ -119,7 +128,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Cadastro + login (automático) com sucesso -> vai direto pro histórico.
-      expect(find.text('Histórico'), findsWidgets);
+      expect(find.text('Minhas análises'), findsOneWidget);
 
       // 2ª "abertura" do app (mesmo storage, novo container/widget tree) —
       // a sessão salva deve pular o login e ir direto pro histórico.
@@ -127,7 +136,7 @@ void main() {
       await tester.pumpWidget(buildRealApp());
       await tester.pumpAndSettle();
 
-      expect(find.text('Histórico'), findsWidgets);
+      expect(find.text('Minhas análises'), findsOneWidget);
       expect(find.text('Bem-vindo'), findsNothing);
     },
   );

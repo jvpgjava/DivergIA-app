@@ -8,6 +8,7 @@ import '../../features/auth/presentation/reset_password_screen.dart';
 import '../../features/auth/presentation/session_controller.dart';
 import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
+import '../../features/history/presentation/analysis_detail_screen.dart';
 import '../../features/history/presentation/history_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -67,6 +68,11 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
       path: '/historico',
       builder: (context, state) =>
           const AppShell(tab: AppNavTab.historico, child: HistoryScreen()),
+    ),
+    GoRoute(
+      path: '/historico/:id',
+      builder: (context, state) =>
+          AnalysisDetailScreen(analiseId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: '/perfil',

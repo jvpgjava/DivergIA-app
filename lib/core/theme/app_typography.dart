@@ -30,6 +30,19 @@ abstract final class AppTypography {
     color: AppColors.textLabel,
   );
 
+  /// Título de card (ex: "History-Card" do histórico) — Sora Bold 15.
+  static TextStyle get cardTitle => GoogleFonts.sora(
+    fontSize: 15,
+    fontWeight: FontWeight.w700,
+    color: AppColors.textPrimary,
+  );
+
+  /// Texto do Score-Badge — Sora Bold 12, cor definida por quem usa.
+  static TextStyle get scoreBadge => GoogleFonts.sora(
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+  );
+
   static TextStyle get buttonText => GoogleFonts.sora(
     fontSize: 16,
     fontWeight: FontWeight.w600,
