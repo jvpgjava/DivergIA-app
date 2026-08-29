@@ -38,10 +38,8 @@ abstract final class AppTypography {
   );
 
   /// Texto do Score-Badge — Sora Bold 12, cor definida por quem usa.
-  static TextStyle get scoreBadge => GoogleFonts.sora(
-    fontSize: 12,
-    fontWeight: FontWeight.w700,
-  );
+  static TextStyle get scoreBadge =>
+      GoogleFonts.sora(fontSize: 12, fontWeight: FontWeight.w700);
 
   static TextStyle get buttonText => GoogleFonts.sora(
     fontSize: 16,

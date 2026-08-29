@@ -25,7 +25,9 @@ class HistoricoState {
     if (busca.trim().isEmpty) return itens;
     final termo = busca.trim().toLowerCase();
     return itens
-        .where((item) => (item.textoPreview ?? '').toLowerCase().contains(termo))
+        .where(
+          (item) => (item.textoPreview ?? '').toLowerCase().contains(termo),
+        )
         .toList();
   }
 
@@ -76,11 +78,15 @@ class HistoricoController extends StateNotifier<HistoricoState> {
 
   void carregarMais() {
     if (!state.temMaisParaCarregar) return;
-    state = state.copyWith(quantidadeVisivel: state.quantidadeVisivel + _tamanhoPagina);
+    state = state.copyWith(
+      quantidadeVisivel: state.quantidadeVisivel + _tamanhoPagina,
+    );
   }
 }
 
 final historicoControllerProvider =
-    StateNotifierProvider.autoDispose<HistoricoController, HistoricoState>((ref) {
+    StateNotifierProvider.autoDispose<HistoricoController, HistoricoState>((
+      ref,
+    ) {
       return HistoricoController(ref.watch(historicoApiProvider));
     });

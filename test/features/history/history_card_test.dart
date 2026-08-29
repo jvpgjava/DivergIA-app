@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('deveMostrarPontuacaoRotuloEPreviewQuandoHaTrechos', (tester) async {
+  testWidgets('deveMostrarPontuacaoRotuloEPreviewQuandoHaTrechos', (
+    tester,
+  ) async {
     final analise = AnaliseResumo(
       id: '1',
       criadoEm: DateTime.now(),
@@ -16,7 +18,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(body: HistoryCard(analise: analise, onTap: () {})),
+        home: Scaffold(
+          body: HistoryCard(analise: analise, onTap: () {}),
+        ),
       ),
     );
 
@@ -26,7 +30,9 @@ void main() {
     expect(find.text('Divergência Analisada'), findsOneWidget);
   });
 
-  testWidgets('naoDeveMostrarBadgeDePontuacaoQuandoNaoHaTrechos', (tester) async {
+  testWidgets('naoDeveMostrarBadgeDePontuacaoQuandoNaoHaTrechos', (
+    tester,
+  ) async {
     final analise = AnaliseResumo(
       id: '1',
       criadoEm: DateTime.now(),
@@ -38,7 +44,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(body: HistoryCard(analise: analise, onTap: () {})),
+        home: Scaffold(
+          body: HistoryCard(analise: analise, onTap: () {}),
+        ),
       ),
     );
 

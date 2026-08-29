@@ -73,13 +73,18 @@ class HistoryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primaryTint,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    pontuacao != null ? 'Divergência Analisada' : 'Sem detalhes salvos',
+                    pontuacao != null
+                        ? 'Divergência Analisada'
+                        : 'Sem detalhes salvos',
                     style: AppTypography.caption.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
@@ -98,7 +103,11 @@ class HistoryCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(LucideIcons.arrowRight, size: 14, color: AppColors.primary),
+                    const Icon(
+                      LucideIcons.arrowRight,
+                      size: 14,
+                      color: AppColors.primary,
+                    ),
                   ],
                 ),
               ],
@@ -120,7 +129,10 @@ class _ScoreBadge extends StatelessWidget {
     final cor = corDaPontuacao(pontuacao);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: cor.bg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: cor.bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Text(
         '$pontuacao pts',
         style: AppTypography.scoreBadge.copyWith(color: cor.fg),

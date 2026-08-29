@@ -1,7 +1,7 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/features/analysis/data/models/resultado_analise.dart';
+import 'package:divergia_app/features/analysis/data/models/trecho_deriva.dart';
 import 'package:divergia_app/features/history/data/historico_api.dart';
-import 'package:divergia_app/features/history/data/models/resultado_analise.dart';
-import 'package:divergia_app/features/history/data/models/trecho_deriva.dart';
 import 'package:divergia_app/features/history/presentation/analysis_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,11 +20,15 @@ void main() {
   Widget buildApp() {
     return ProviderScope(
       overrides: [historicoApiProvider.overrideWithValue(api)],
-      child: const MaterialApp(home: AnalysisDetailScreen(analiseId: 'abc-123')),
+      child: const MaterialApp(
+        home: AnalysisDetailScreen(analiseId: 'abc-123'),
+      ),
     );
   }
 
-  testWidgets('deveMostrarOsTrechosDaAnaliseAoCarregarComSucesso', (tester) async {
+  testWidgets('deveMostrarOsTrechosDaAnaliseAoCarregarComSucesso', (
+    tester,
+  ) async {
     when(() => api.buscar('abc-123')).thenAnswer(
       (_) async => ResultadoAnalise(
         analiseId: 'abc-123',
@@ -50,7 +54,9 @@ void main() {
     expect(find.textContaining('a explicação do desvio'), findsOneWidget);
   });
 
-  testWidgets('deveMostrarMensagemDeErroComBotaoDeTentarNovamente', (tester) async {
+  testWidgets('deveMostrarMensagemDeErroComBotaoDeTentarNovamente', (
+    tester,
+  ) async {
     when(() => api.buscar('abc-123')).thenThrow(const NotFoundException());
 
     await tester.pumpWidget(buildApp());

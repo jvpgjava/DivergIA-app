@@ -7,7 +7,11 @@ import 'package:mocktail/mocktail.dart';
 class _MockApiClient extends Mock implements ApiClient {}
 
 Response<T> _resposta<T>(T data) {
-  return Response<T>(requestOptions: RequestOptions(path: '/qualquer'), data: data, statusCode: 200);
+  return Response<T>(
+    requestOptions: RequestOptions(path: '/qualquer'),
+    data: data,
+    statusCode: 200,
+  );
 }
 
 void main() {
@@ -53,7 +57,9 @@ void main() {
   });
 
   test('buscarDeveMapearOResultadoComSeusTrechos', () async {
-    when(() => client.get<Map<String, dynamic>>('/api/historico/abc-123')).thenAnswer(
+    when(
+      () => client.get<Map<String, dynamic>>('/api/historico/abc-123'),
+    ).thenAnswer(
       (_) async => _resposta({
         'analiseId': 'abc-123',
         'criadoEm': '2026-08-20T10:00:00.000Z',

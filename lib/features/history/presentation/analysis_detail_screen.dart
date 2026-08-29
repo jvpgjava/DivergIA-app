@@ -7,8 +7,8 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
+import '../../analysis/data/models/resultado_analise.dart';
 import '../data/historico_api.dart';
-import '../data/models/resultado_analise.dart';
 
 /// Placeholder da Fase 2 — já busca e mostra o dado real da análise, mas
 /// sem a fidelidade visual ao Figma ("analysis-results"), que é escopo da
@@ -19,7 +19,8 @@ class AnalysisDetailScreen extends ConsumerStatefulWidget {
   final String analiseId;
 
   @override
-  ConsumerState<AnalysisDetailScreen> createState() => _AnalysisDetailScreenState();
+  ConsumerState<AnalysisDetailScreen> createState() =>
+      _AnalysisDetailScreenState();
 }
 
 class _AnalysisDetailScreenState extends ConsumerState<AnalysisDetailScreen> {
@@ -35,7 +36,9 @@ class _AnalysisDetailScreenState extends ConsumerState<AnalysisDetailScreen> {
     // `Future(...)` garante que até uma falha síncrona na chamada vire um
     // erro da Future (e caia no `FutureBuilder`), em vez de derrubar o
     // build do widget.
-    _futuro = Future(() => ref.read(historicoApiProvider).buscar(widget.analiseId));
+    _futuro = Future(
+      () => ref.read(historicoApiProvider).buscar(widget.analiseId),
+    );
   }
 
   @override
@@ -52,19 +55,27 @@ class _AnalysisDetailScreenState extends ConsumerState<AnalysisDetailScreen> {
         future: _futuro,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
           }
 
           if (snapshot.hasError) {
             final erro = snapshot.error;
-            final mensagem = erro is ApiException ? erro.message : 'Erro inesperado.';
+            final mensagem = erro is ApiException
+                ? erro.message
+                : 'Erro inesperado.';
             return Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(mensagem, textAlign: TextAlign.center, style: AppTypography.body),
+                    Text(
+                      mensagem,
+                      textAlign: TextAlign.center,
+                      style: AppTypography.body,
+                    ),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () => setState(_carregar),
@@ -80,10 +91,16 @@ class _AnalysisDetailScreenState extends ConsumerState<AnalysisDetailScreen> {
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [
-              Text(formatarDataRelativa(resultado.criadoEm), style: AppTypography.body),
+              Text(
+                formatarDataRelativa(resultado.criadoEm),
+                style: AppTypography.body,
+              ),
               const SizedBox(height: 16),
               if (resultado.trechos.isEmpty)
-                Text('Nenhum desvio de sentido encontrado.', style: AppTypography.bodyEmphasis),
+                Text(
+                  'Nenhum desvio de sentido encontrado.',
+                  style: AppTypography.bodyEmphasis,
+                ),
               for (final trecho in resultado.trechos) ...[
                 Container(
                   width: double.infinity,
@@ -102,11 +119,20 @@ class _AnalysisDetailScreenState extends ConsumerState<AnalysisDetailScreen> {
                         style: AppTypography.cardTitle,
                       ),
                       const SizedBox(height: 8),
-                      Text('Original: ${trecho.trechoOriginal}', style: AppTypography.body),
+                      Text(
+                        'Original: ${trecho.trechoOriginal}',
+                        style: AppTypography.body,
+                      ),
                       const SizedBox(height: 4),
-                      Text('Editado: ${trecho.trechoEditado}', style: AppTypography.body),
+                      Text(
+                        'Editado: ${trecho.trechoEditado}',
+                        style: AppTypography.body,
+                      ),
                       const SizedBox(height: 8),
-                      Text(trecho.explicacao, style: AppTypography.bodyEmphasis),
+                      Text(
+                        trecho.explicacao,
+                        style: AppTypography.bodyEmphasis,
+                      ),
                     ],
                   ),
                 ),

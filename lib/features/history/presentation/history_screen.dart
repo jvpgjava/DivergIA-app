@@ -60,9 +60,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Minhas análises', style: AppTypography.titleMedium.copyWith(fontSize: 22)),
+                  Text(
+                    'Minhas análises',
+                    style: AppTypography.titleMedium.copyWith(fontSize: 22),
+                  ),
                   const SizedBox(height: 4),
-                  Text('Histórico de comparações de sentido', style: AppTypography.body),
+                  Text(
+                    'Histórico de comparações de sentido',
+                    style: AppTypography.body,
+                  ),
                 ],
               ),
             ),
@@ -81,14 +87,21 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(LucideIcons.search, size: 16, color: AppColors.textSecondary),
+                          const Icon(
+                            LucideIcons.search,
+                            size: 16,
+                            color: AppColors.textSecondary,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: TextField(
                               controller: _buscaController,
-                              onChanged: (valor) =>
-                                  ref.read(historicoControllerProvider.notifier).buscar(valor),
-                              style: AppTypography.body.copyWith(color: AppColors.textPrimary),
+                              onChanged: (valor) => ref
+                                  .read(historicoControllerProvider.notifier)
+                                  .buscar(valor),
+                              style: AppTypography.body.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
                               decoration: const InputDecoration(
                                 isDense: true,
                                 border: InputBorder.none,
@@ -112,7 +125,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                         border: Border.all(color: AppColors.border),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(LucideIcons.slidersHorizontal, size: 18),
+                      child: const Icon(
+                        LucideIcons.slidersHorizontal,
+                        size: 18,
+                      ),
                     ),
                   ),
                 ],
@@ -128,7 +144,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
   Widget _buildConteudo(HistoricoState state) {
     if (state.loading) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
     }
 
     if (state.errorMessage != null) {
@@ -145,7 +163,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () => ref.read(historicoControllerProvider.notifier).carregar(),
+                onPressed: () =>
+                    ref.read(historicoControllerProvider.notifier).carregar(),
                 child: const Text('Tentar novamente'),
               ),
             ],
@@ -173,7 +192,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
     return RefreshIndicator(
       color: AppColors.primary,
-      onRefresh: () => ref.read(historicoControllerProvider.notifier).carregar(),
+      onRefresh: () =>
+          ref.read(historicoControllerProvider.notifier).carregar(),
       child: ListView.separated(
         controller: _scrollController,
         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
@@ -187,7 +207,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 child: SizedBox(
                   width: 24,
                   height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
             );

@@ -30,10 +30,14 @@ void main() {
     final router = GoRouter(
       initialLocation: '/historico',
       routes: [
-        GoRoute(path: '/historico', builder: (context, state) => const HistoryScreen()),
+        GoRoute(
+          path: '/historico',
+          builder: (context, state) => const HistoryScreen(),
+        ),
         GoRoute(
           path: '/historico/:id',
-          builder: (context, state) => Text('detalhe ${state.pathParameters['id']}'),
+          builder: (context, state) =>
+              Text('detalhe ${state.pathParameters['id']}'),
         ),
       ],
     );

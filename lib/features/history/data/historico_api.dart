@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../analysis/data/models/resultado_analise.dart';
 import 'models/analise_resumo.dart';
-import 'models/resultado_analise.dart';
 
 /// Chamadas HTTP do histórico — espelha `HistoricoController` do backend
 /// (`/api/historico`).
@@ -19,7 +19,9 @@ class HistoricoApi {
   }
 
   Future<ResultadoAnalise> buscar(String analiseId) async {
-    final response = await _client.get<Map<String, dynamic>>('/api/historico/$analiseId');
+    final response = await _client.get<Map<String, dynamic>>(
+      '/api/historico/$analiseId',
+    );
     return ResultadoAnalise.fromJson(response.data!);
   }
 }

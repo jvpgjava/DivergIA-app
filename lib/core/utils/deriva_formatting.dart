@@ -56,7 +56,11 @@ String rotuloTipoDesvio(String? tipoDesvio) {
 
 /// Cores do Score-Badge do Figma — variam com a severidade (0-100).
 ({Color bg, Color fg}) corDaPontuacao(int pontuacao) {
-  if (pontuacao >= 60) return (bg: AppColors.scoreAltoBg, fg: AppColors.scoreAltoFg);
-  if (pontuacao >= 30) return (bg: AppColors.scoreMedioBg, fg: AppColors.scoreMedioFg);
+  if (pontuacao >= 60) {
+    return (bg: AppColors.scoreAltoBg, fg: AppColors.scoreAltoFg);
+  }
+  if (pontuacao >= 30) {
+    return (bg: AppColors.scoreMedioBg, fg: AppColors.scoreMedioFg);
+  }
   return (bg: AppColors.scoreBaixoBg, fg: AppColors.scoreBaixoFg);
 }
