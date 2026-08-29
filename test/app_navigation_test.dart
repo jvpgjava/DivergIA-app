@@ -89,9 +89,10 @@ void main() {
   ) async {
     await tester.pumpWidget(buildApp(SessionStatus.checking));
 
-    expect(find.text('DivergIA'), findsOneWidget);
+    final logo = find.byKey(const Key('splash-logo'));
+    expect(logo, findsOneWidget);
     expect(
-      Theme.of(tester.element(find.text('DivergIA'))).colorScheme.primary,
+      Theme.of(tester.element(logo)).colorScheme.primary,
       AppColors.primary,
     );
   });
