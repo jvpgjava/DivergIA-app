@@ -1,14 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
 import '../../../core/widgets/fade_slide_in.dart';
+import '../../../core/widgets/screen_back_header.dart';
 import '../data/models/painel_tendencia.dart';
 import '../data/models/ponto_tendencia.dart';
 import 'tendencia_controller.dart';
@@ -54,23 +53,12 @@ class TendenciaScreen extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
           children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(LucideIcons.chevronLeft),
-                  onPressed: () => context.pop(),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Painel de tendência',
-                  style: AppTypography.titleMedium(
-                    context,
-                  ).copyWith(fontSize: 20),
-                ),
-              ],
+            const ScreenBackHeader(
+              titulo: 'Painel de tendência',
+              tituloFontSize: 20,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12),
+              padding: const EdgeInsets.only(left: 44),
               child: Text(
                 'Evolução das suas análises ao longo do tempo',
                 style: AppTypography.body(context),

@@ -15,7 +15,7 @@ void main() {
     api = RewriteApi(client);
   });
 
-  test('sugerirDeveChamarOEndpointCorretoEDevolverATextoDaSugestao', () async {
+  test('sugerirDeveChamarOEndpointCorretoEDevolverAsTresSugestoes', () async {
     when(
       () => client.post<Map<String, dynamic>>(
         '/api/analises/trechos/trecho-1/sugestao-reescrita',
@@ -26,16 +26,43 @@ void main() {
           path: '/api/analises/trechos/trecho-1/sugestao-reescrita',
         ),
         statusCode: 200,
-        data: {'sugestao': 'texto reescrito fiel ao original'},
+        data: {
+          'sugestoes': ['opção 1', 'opção 2', 'opção 3'],
+        },
       ),
     );
 
-    final sugestao = await api.sugerir('trecho-1');
+    final sugestoes = await api.sugerir('trecho-1');
 
-    expect(sugestao, 'texto reescrito fiel ao original');
+    expect(sugestoes, ['opção 1', 'opção 2', 'opção 3']);
     verify(
       () => client.post<Map<String, dynamic>>(
         '/api/analises/trechos/trecho-1/sugestao-reescrita',
+      ),
+    ).called(1);
+  });
+
+  test('aceitarDeveChamarOPutComOTextoEscolhido', () async {
+    when(
+      () => client.put<void>(
+        '/api/analises/trechos/trecho-1/sugestao-reescrita',
+        data: {'texto': 'opção 2'},
+      ),
+    ).thenAnswer(
+      (_) async => Response(
+        requestOptions: RequestOptions(
+          path: '/api/analises/trechos/trecho-1/sugestao-reescrita',
+        ),
+        statusCode: 204,
+      ),
+    );
+
+    await api.aceitar('trecho-1', 'opção 2');
+
+    verify(
+      () => client.put<void>(
+        '/api/analises/trechos/trecho-1/sugestao-reescrita',
+        data: {'texto': 'opção 2'},
       ),
     ).called(1);
   });

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,7 +14,10 @@ import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/analysis/data/models/trecho_deriva.dart';
 import '../../features/history/presentation/history_screen.dart';
 import '../../features/history/presentation/tendencia_screen.dart';
+import '../../features/profile/presentation/photo_crop_screen.dart';
+import '../../features/profile/presentation/privacy_policy_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/profile/presentation/terms_of_service_screen.dart';
 import '../../features/rewrite/presentation/rewrite_suggestion_screen.dart';
 import '../widgets/app_bottom_nav.dart';
 import 'app_shell.dart';
@@ -93,6 +98,19 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
       path: '/perfil',
       builder: (context, state) =>
           const AppShell(tab: AppNavTab.perfil, child: ProfileScreen()),
+    ),
+    GoRoute(
+      path: '/perfil/cortar-foto',
+      builder: (context, state) =>
+          PhotoCropScreen(bytes: state.extra as Uint8List),
+    ),
+    GoRoute(
+      path: '/termos-de-servico',
+      builder: (context, state) => const TermsOfServiceScreen(),
+    ),
+    GoRoute(
+      path: '/politica-de-privacidade',
+      builder: (context, state) => const PrivacyPolicyScreen(),
     ),
   ],
 );

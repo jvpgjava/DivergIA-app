@@ -6,8 +6,6 @@ import 'package:divergia_app/features/auth/data/auth_api.dart';
 import 'package:divergia_app/features/auth/data/models/usuario.dart';
 import 'package:divergia_app/features/auth/presentation/session_controller.dart';
 import 'package:divergia_app/features/history/data/historico_api.dart';
-import 'package:divergia_app/features/profile/data/consentimento_api.dart';
-import 'package:divergia_app/features/profile/data/models/consentimento.dart';
 import 'package:divergia_app/features/profile/presentation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,8 +15,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _MockAuthApi extends Mock implements AuthApi {}
-
-class _MockConsentimentoApi extends Mock implements ConsentimentoApi {}
 
 class _MockHistoricoApi extends Mock implements HistoricoApi {}
 
@@ -64,7 +60,6 @@ class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
 
 void main() {
   late _MockAuthApi authApi;
-  late _MockConsentimentoApi consentimentoApi;
   late _MockHistoricoApi historicoApi;
 
   final usuario = Usuario(
@@ -73,31 +68,21 @@ void main() {
     email: 'ana.clara@example.com',
     criadoEm: DateTime.now(),
   );
-  final consentimento = Consentimento(
-    manterHistorico: true,
-    contribuirParaRag: false,
-    concedidoEm: DateTime.now(),
-  );
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
 
     authApi = _MockAuthApi();
-    consentimentoApi = _MockConsentimentoApi();
     historicoApi = _MockHistoricoApi();
 
     when(() => authApi.me()).thenAnswer((_) async => usuario);
-    when(
-      () => consentimentoApi.obter(),
-    ).thenAnswer((_) async => consentimento);
   });
 
   Widget buildApp() {
     return ProviderScope(
       overrides: [
         authApiProvider.overrideWithValue(authApi),
-        consentimentoApiProvider.overrideWithValue(consentimentoApi),
         historicoApiProvider.overrideWithValue(historicoApi),
         sessionControllerProvider.overrideWith(
           (ref) => SessionController(
@@ -136,8 +121,6 @@ void main() {
     expect(find.text('ana.clara@example.com'), findsOneWidget);
     expect(find.text('Notificações push'), findsOneWidget);
     expect(find.text('Modo escuro'), findsOneWidget);
-    expect(find.text('Status de consentimento'), findsOneWidget);
-    expect(find.text('Ativo'), findsOneWidget);
     expect(find.text('Excluir histórico de análises'), findsOneWidget);
     expect(find.text('Excluir conta'), findsOneWidget);
     expect(find.text('Sair da conta'), findsOneWidget);
@@ -311,40 +294,6 @@ void main() {
 
       expect(find.text('E-mail alterado.'), findsOneWidget);
       expect(find.text('novo@example.com'), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'deveAbrirOBottomSheetDeConsentimentoEAtualizarAoAlternarUmSwitch',
-    (tester) async {
-      final atualizado = Consentimento(
-        manterHistorico: false,
-        contribuirParaRag: false,
-        concedidoEm: DateTime.now(),
-      );
-      when(
-        () => consentimentoApi.atualizar(
-          manterHistorico: false,
-          contribuirParaRag: false,
-        ),
-      ).thenAnswer((_) async => atualizado);
-
-      await pumpProfileScreen(tester);
-
-      await tester.tap(find.text('Status de consentimento'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Manter histórico das análises'), findsOneWidget);
-
-      await tester.tap(switchNaLinhaDoRotulo('Manter histórico das análises'));
-      await tester.pumpAndSettle();
-
-      verify(
-        () => consentimentoApi.atualizar(
-          manterHistorico: false,
-          contribuirParaRag: false,
-        ),
-      ).called(1);
     },
   );
 }

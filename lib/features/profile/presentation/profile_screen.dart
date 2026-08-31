@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_color_tokens.dart';
@@ -18,10 +21,8 @@ const _extensoesImagemAceitas = ['jpg', 'jpeg', 'png', 'webp'];
 /// Tela "Meu perfil" — fidelidade ao frame "profile-settings" do Figma.
 ///
 /// O Figma mostra "Período de retenção de dados" com um valor fixo de "30
-/// dias", mas o backend só tem um booleano real (manter histórico ou não,
-/// via `/api/consentimento`) — não existe uma configuração de dias. Por
-/// decisão explícita, essa linha foi substituída pelo "Status de
-/// consentimento" (que já é real) em vez de inventar um número.
+/// dias" — removido por decisão explícita: histórico e contribuição para o
+/// RAG são sempre ativos agora, sem opção de opt-out por usuário.
 ///
 /// "Excluir conta" também não aparece nesse frame do Figma, mas o roadmap
 /// exige essa ação e o backend já tem o endpoint — foi adicionada como uma
@@ -124,13 +125,6 @@ class ProfileScreen extends ConsumerWidget {
     await ref.read(profileControllerProvider.notifier).logout();
   }
 
-  Future<void> _abrirConsentimento(BuildContext context, WidgetRef ref) {
-    return showAppBottomSheet<void>(
-      context,
-      builder: (context) => const _ConsentimentoSheet(),
-    );
-  }
-
   Future<void> _trocarFoto(BuildContext context, WidgetRef ref) async {
     final arquivos = await FilePicker.pickFiles(
       type: FileType.custom,
@@ -141,9 +135,17 @@ class ProfileScreen extends ConsumerWidget {
     final bytes = await arquivo.readAsBytes();
     if (!context.mounted) return;
 
+    // O recorte sempre devolve PNG (o pacote não expõe outro formato de
+    // saída), independente da extensão do arquivo original escolhido.
+    final bytesRecortados = await context.push<Uint8List>(
+      '/perfil/cortar-foto',
+      extra: bytes,
+    );
+    if (bytesRecortados == null || !context.mounted) return;
+
     final erro = await ref
         .read(profileControllerProvider.notifier)
-        .atualizarFotoPerfil(bytes: bytes, nomeArquivo: arquivo.name);
+        .atualizarFotoPerfil(bytes: bytesRecortados, nomeArquivo: 'foto.png');
     if (!context.mounted) return;
     if (erro != null) {
       ScaffoldMessenger.of(
@@ -283,27 +285,6 @@ class ProfileScreen extends ConsumerWidget {
                     child: _SettingsGroup(
                       titulo: 'Privacidade',
                       children: [
-                        _SettingsRow(
-                          label: 'Status de consentimento',
-                          onTap: () => _abrirConsentimento(context, ref),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                state.consentimento!.manterHistorico
-                                    ? 'Ativo'
-                                    : 'Inativo',
-                                style: AppTypography.caption(context),
-                              ),
-                              const SizedBox(width: 4),
-                              Icon(
-                                LucideIcons.chevronRight,
-                                size: 14,
-                                color: colors.textSecondary,
-                              ),
-                            ],
-                          ),
-                        ),
                         _DangerRow(
                           label: 'Excluir histórico de análises',
                           onTap: () => _excluirHistorico(context, ref),
@@ -323,8 +304,7 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         _SettingsRow(
                           label: 'Termos de Serviço',
-                          onTap: () =>
-                              _avisarEmBreve(context, 'Termos de Serviço'),
+                          onTap: () => context.push('/termos-de-servico'),
                           trailing: Icon(
                             LucideIcons.chevronRight,
                             size: 14,
@@ -334,7 +314,7 @@ class ProfileScreen extends ConsumerWidget {
                         _SettingsRow(
                           label: 'Política de Privacidade',
                           onTap: () =>
-                              _avisarEmBreve(context, 'Política de Privacidade'),
+                              context.push('/politica-de-privacidade'),
                           trailing: Icon(
                             LucideIcons.chevronRight,
                             size: 14,
@@ -808,81 +788,3 @@ class _DangerRow extends StatelessWidget {
   }
 }
 
-class _ConsentimentoSheet extends ConsumerWidget {
-  const _ConsentimentoSheet();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final consentimento = ref.watch(profileControllerProvider).consentimento;
-    final colors = context.colors;
-
-    if (consentimento == null) return const SizedBox.shrink();
-
-    void atualizar({bool? manterHistorico, bool? contribuirParaRag}) {
-      ref
-          .read(profileControllerProvider.notifier)
-          .atualizarConsentimento(
-            manterHistorico: manterHistorico ?? consentimento.manterHistorico,
-            contribuirParaRag:
-                contribuirParaRag ?? consentimento.contribuirParaRag,
-          );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Status de consentimento', style: AppTypography.cardTitle(context)),
-          const SizedBox(height: 4),
-          Text(
-            'Controle o que o DivergIA guarda sobre suas análises.',
-            style: AppTypography.body(context),
-          ),
-          const SizedBox(height: 16),
-          _ConsentimentoRow(
-            label: 'Manter histórico das análises',
-            value: consentimento.manterHistorico,
-            onChanged: (valor) => atualizar(manterHistorico: valor),
-          ),
-          _ConsentimentoRow(
-            label: 'Contribuir para a base de referência (RAG)',
-            value: consentimento.contribuirParaRag,
-            onChanged: (valor) => atualizar(contribuirParaRag: valor),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Concedido em ${consentimento.concedidoEm.toLocal()}'.split('.').first,
-            style: AppTypography.caption(context).copyWith(color: colors.textSecondary),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ConsentimentoRow extends StatelessWidget {
-  const _ConsentimentoRow({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(label, style: AppTypography.body(context)),
-        ),
-        Switch(value: value, onChanged: onChanged),
-      ],
-    );
-  }
-}

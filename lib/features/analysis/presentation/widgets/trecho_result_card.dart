@@ -35,6 +35,10 @@ class TrechoResultCard extends StatelessWidget {
         _Painel(rotulo: 'TEXTO EDITADO', texto: trecho.trechoEditado),
         const SizedBox(height: 12),
         _ExplanationBanner(trecho: trecho),
+        if (trecho.sugestaoAceita != null) ...[
+          const SizedBox(height: 12),
+          _SugestaoAceitaPainel(texto: trecho.sugestaoAceita!),
+        ],
         const SizedBox(height: 12),
         SizedBox(
           width: double.infinity,
@@ -93,6 +97,46 @@ class _Painel extends StatelessWidget {
               decoration: TextDecoration.underline,
               decorationColor: AppColors.explanationBannerFg,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Sugestão de reescrita que o usuário já escolheu aceitar — fica visível
+/// aqui pra ele ter controle/registro do que decidiu usar, sem precisar
+/// abrir a tela de sugestão de novo.
+class _SugestaoAceitaPainel extends StatelessWidget {
+  const _SugestaoAceitaPainel({required this.texto});
+
+  final String texto;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colors.primaryTint,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'SUGESTÃO ACEITA',
+            style: AppTypography.caption(
+              context,
+            ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 0.4, color: AppColors.primary),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            texto,
+            style: AppTypography.bodyEmphasis(
+              context,
+            ).copyWith(color: colors.textPrimary),
           ),
         ],
       ),

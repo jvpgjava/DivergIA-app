@@ -23,6 +23,8 @@ void main() {
     intensidade: 0.72,
   );
 
+  const tresSugestoes = ['opção um', 'opção dois', 'opção três'];
+
   setUp(() {
     api = _MockRewriteApi();
   });
@@ -61,11 +63,11 @@ void main() {
   }
 
   testWidgets(
-    'deveMostrarOTrechoOriginalEATextoDaSugestaoJaPreenchidoEEditavel',
+    'deveMostrarOTrechoOriginalEAsTresOpcoesComAPrimeiraSelecionada',
     (tester) async {
       when(
         () => api.sugerir('trecho-1'),
-      ).thenAnswer((_) async => 'texto reescrito fiel ao original');
+      ).thenAnswer((_) async => tresSugestoes);
 
       await abrirTelaDeReescrita(tester);
 
@@ -73,16 +75,11 @@ void main() {
         find.textContaining('eliminando totalmente a necessidade de polling'),
         findsOneWidget,
       );
-      expect(find.text('texto reescrito fiel ao original'), findsOneWidget);
+      expect(find.text('opção um'), findsOneWidget);
+      expect(find.text('opção dois'), findsOneWidget);
+      expect(find.text('opção três'), findsOneWidget);
       expect(find.textContaining('a explicação do desvio'), findsOneWidget);
-
-      await tester.enterText(
-        find.widgetWithText(TextField, 'texto reescrito fiel ao original'),
-        'texto editado pela pessoa',
-      );
-      await tester.pump();
-
-      expect(find.text('texto editado pela pessoa'), findsOneWidget);
+      expect(find.byIcon(Icons.radio_button_checked), findsOneWidget);
     },
   );
 
@@ -96,31 +93,79 @@ void main() {
     expect(find.text('Tentar novamente'), findsOneWidget);
   });
 
-  testWidgets('deveVoltarParaATelaAnteriorAoTocarEmDescartar', (tester) async {
-    when(
-      () => api.sugerir('trecho-1'),
-    ).thenAnswer((_) async => 'texto reescrito fiel ao original');
-
-    await abrirTelaDeReescrita(tester);
-
-    await tester.tap(find.text('Descartar'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('abrir reescrita'), findsOneWidget);
-  });
-
-  testWidgets('deveVoltarParaATelaAnteriorAoTocarEmAceitarSugestao', (
+  testWidgets('devePermitirTrocarASugestaoSelecionadaAoTocarNaOpcao', (
     tester,
   ) async {
     when(
       () => api.sugerir('trecho-1'),
-    ).thenAnswer((_) async => 'texto reescrito fiel ao original');
+    ).thenAnswer((_) async => tresSugestoes);
 
     await abrirTelaDeReescrita(tester);
+    await tester.tap(find.text('opção dois'));
+    await tester.pump();
 
-    await tester.tap(find.text('Aceitar sugestão'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('abrir reescrita'), findsOneWidget);
+    expect(find.byIcon(Icons.radio_button_checked), findsOneWidget);
   });
+
+  testWidgets(
+    'deveMostrarPopupDeGerarMaisOpcoesAoTocarEmDescartarESairAoConfirmar',
+    (tester) async {
+      when(
+        () => api.sugerir('trecho-1'),
+      ).thenAnswer((_) async => tresSugestoes);
+
+      await abrirTelaDeReescrita(tester);
+
+      await tester.tap(find.text('Descartar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Gerar mais opções'), findsOneWidget);
+
+      await tester.tap(find.text('Sair'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('abrir reescrita'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'deveGerarNovasOpcoesAoConfirmarNoPopupDeDescartar',
+    (tester) async {
+      when(
+        () => api.sugerir('trecho-1'),
+      ).thenAnswer((_) async => tresSugestoes);
+
+      await abrirTelaDeReescrita(tester);
+
+      await tester.tap(find.text('Descartar'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Gerar mais opções'));
+      await tester.pumpAndSettle();
+
+      verify(() => api.sugerir('trecho-1')).called(2);
+      expect(find.text('opção um'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'deveAceitarASugestaoSelecionadaEVoltarParaATelaAnteriorComTrue',
+    (tester) async {
+      when(
+        () => api.sugerir('trecho-1'),
+      ).thenAnswer((_) async => tresSugestoes);
+      when(
+        () => api.aceitar('trecho-1', 'opção dois'),
+      ).thenAnswer((_) async {});
+
+      await abrirTelaDeReescrita(tester);
+      await tester.tap(find.text('opção dois'));
+      await tester.pump();
+
+      await tester.tap(find.text('Aceitar sugestão'));
+      await tester.pumpAndSettle();
+
+      verify(() => api.aceitar('trecho-1', 'opção dois')).called(1);
+      expect(find.text('abrir reescrita'), findsOneWidget);
+    },
+  );
 }

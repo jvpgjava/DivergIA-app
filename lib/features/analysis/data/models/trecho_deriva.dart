@@ -7,6 +7,7 @@ class TrechoDeriva {
     required this.trechoEditado,
     required this.explicacao,
     required this.intensidade,
+    this.sugestaoAceita,
   });
 
   factory TrechoDeriva.fromJson(Map<String, dynamic> json) => TrechoDeriva(
@@ -16,6 +17,7 @@ class TrechoDeriva {
     trechoEditado: json['trechoEditado'] as String,
     explicacao: json['explicacao'] as String,
     intensidade: (json['intensidade'] as num).toDouble(),
+    sugestaoAceita: json['sugestaoAceita'] as String?,
   );
 
   final String id;
@@ -24,4 +26,5 @@ class TrechoDeriva {
   final String trechoEditado;
   final String explicacao;
   final double intensidade;
+  final String? sugestaoAceita;
 }

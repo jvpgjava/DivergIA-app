@@ -136,7 +136,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               cursorColor: AppColors.primary,
                               decoration: const InputDecoration(
                                 isDense: true,
+                                filled: false,
+                                contentPadding: EdgeInsets.zero,
                                 border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                disabledBorder: InputBorder.none,
                                 hintText: 'Buscar análise...',
                               ),
                             ),

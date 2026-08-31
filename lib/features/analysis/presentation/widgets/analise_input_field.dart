@@ -14,11 +14,10 @@ const _limiteCaracteres = 10000;
 /// nome do arquivo (não tem referência no Figma pra esse estado — segue a
 /// mesma linguagem visual das outras caixas).
 ///
-/// Rótulo e contador ficam FORA da caixa (não dentro, com um cabeçalho
-/// separado por divisor — essa versão anterior também não agradou) e o
-/// anexo é só um ícone no canto, com espaço reservado no próprio texto
-/// (`contentPadding` à direita) pra nunca ficar por cima do que foi
-/// digitado.
+/// Rótulo e contador ficam FORA da caixa, e "Anexar arquivo" também — a
+/// caixa em si só existe pra digitar o texto (ou mostrar o arquivo
+/// escolhido); antes havia um ícone de clipe flutuando por cima do texto
+/// digitado, o que criava a impressão de "duas caixas" na mesma área.
 class AnaliseInputField extends StatefulWidget {
   const AnaliseInputField({
     super.key,
@@ -128,55 +127,73 @@ class _AnaliseInputFieldState extends State<AnaliseInputField> {
           ),
           child: widget.arquivo != null
               ? _ArquivoCard(arquivo: widget.arquivo!)
-              : Stack(
+              : TextField(
+                  controller: widget.controller,
+                  focusNode: _focusNode,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  maxLength: _limiteCaracteres,
+                  buildCounter:
+                      (
+                        context, {
+                        required currentLength,
+                        required isFocused,
+                        maxLength,
+                      }) => null,
+                  cursorColor: AppColors.primary,
+                  style: AppTypography.body(
+                    context,
+                  ).copyWith(fontSize: 13, color: colors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    hintStyle: AppTypography.body(
+                      context,
+                    ).copyWith(fontSize: 13),
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    isDense: true,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+        ),
+        if (widget.arquivo == null) ...[
+          const SizedBox(height: 6),
+          Align(
+            alignment: Alignment.centerRight,
+            child: InkWell(
+              onTap: widget.onAnexar,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 4,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextField(
-                      controller: widget.controller,
-                      focusNode: _focusNode,
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      maxLength: _limiteCaracteres,
-                      buildCounter:
-                          (
-                            context, {
-                            required currentLength,
-                            required isFocused,
-                            maxLength,
-                          }) => null,
-                      cursorColor: AppColors.primary,
-                      style: AppTypography.body(
-                        context,
-                      ).copyWith(fontSize: 13, color: colors.textPrimary),
-                      decoration: InputDecoration(
-                        hintText: widget.hint,
-                        hintStyle: AppTypography.body(
-                          context,
-                        ).copyWith(fontSize: 13),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.only(right: 30),
-                      ),
+                    Icon(
+                      LucideIcons.paperclip,
+                      size: 14,
+                      color: colors.textSecondary,
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: InkWell(
-                        onTap: widget.onAnexar,
-                        borderRadius: BorderRadius.circular(14),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: Icon(
-                            LucideIcons.paperclip,
-                            size: 18,
-                            color: colors.textSecondary,
-                          ),
-                        ),
-                      ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Anexar arquivo',
+                      style: AppTypography.caption(
+                        context,
+                      ).copyWith(color: colors.textSecondary),
                     ),
                   ],
                 ),
-        ),
+              ),
+            ),
+          ),
+        ],
         if (widget.errorText != null) ...[
           const SizedBox(height: 4),
           Text(
