@@ -107,6 +107,58 @@ class ProfileController extends StateNotifier<ProfileState> {
       return false;
     }
   }
+
+  Future<String?> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  }) async {
+    try {
+      await _authApi.alterarSenha(senhaAtual: senhaAtual, novaSenha: novaSenha);
+      return null;
+    } on ApiException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future<String?> alterarEmail({
+    required String novoEmail,
+    required String senhaAtual,
+  }) async {
+    try {
+      final atualizado = await _authApi.alterarEmail(
+        novoEmail: novoEmail,
+        senhaAtual: senhaAtual,
+      );
+      state = ProfileState(
+        loading: false,
+        usuario: atualizado,
+        consentimento: state.consentimento,
+      );
+      return null;
+    } on ApiException catch (e) {
+      return e.message;
+    }
+  }
+
+  Future<String?> atualizarFotoPerfil({
+    required List<int> bytes,
+    required String nomeArquivo,
+  }) async {
+    try {
+      final fotoUrl = await _authApi.atualizarFotoPerfil(
+        bytes: bytes,
+        nomeArquivo: nomeArquivo,
+      );
+      state = ProfileState(
+        loading: false,
+        usuario: state.usuario?.copyWith(fotoUrl: fotoUrl),
+        consentimento: state.consentimento,
+      );
+      return null;
+    } on ApiException catch (e) {
+      return e.message;
+    }
+  }
 }
 
 final profileControllerProvider =

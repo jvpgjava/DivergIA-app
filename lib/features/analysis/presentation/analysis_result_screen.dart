@@ -8,6 +8,7 @@ import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../../history/data/historico_api.dart';
 import '../data/models/resultado_analise.dart';
 import '../data/models/trecho_deriva.dart';
@@ -132,15 +133,20 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                 ),
                 const SizedBox(height: 16),
                 if (principal != null)
-                  ScoreCard(
-                    pontuacao: principal.pontuacao,
-                    tipoDesvio: principal.tipoDesvio,
+                  FadeSlideIn(
+                    child: ScoreCard(
+                      pontuacao: principal.pontuacao,
+                      tipoDesvio: principal.tipoDesvio,
+                    ),
                   ),
-                for (final trecho in resultado.trechos) ...[
+                for (final (indice, trecho) in resultado.trechos.indexed) ...[
                   const SizedBox(height: 16),
-                  TrechoResultCard(
-                    trecho: trecho,
-                    onSugerirReescrita: () => _abrirSugestaoDeReescrita(trecho),
+                  FadeSlideIn(
+                    atraso: atrasoEmCascata(indice + 1),
+                    child: TrechoResultCard(
+                      trecho: trecho,
+                      onSugerirReescrita: () => _abrirSugestaoDeReescrita(trecho),
+                    ),
                   ),
                 ],
               ],

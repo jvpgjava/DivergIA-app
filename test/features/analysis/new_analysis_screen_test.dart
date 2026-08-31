@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockAnaliseApi extends Mock implements AnaliseApi {}
@@ -38,6 +39,39 @@ void main() {
       child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }
+
+  testWidgets('deveVoltarParaATelaAnteriorAoTocarNoBotaoDeVoltar', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/historico',
+      routes: [
+        GoRoute(
+          path: '/historico',
+          builder: (context, state) => const Text('tela de historico'),
+        ),
+        GoRoute(
+          path: '/nova-analise',
+          builder: (context, state) => const NewAnalysisScreen(),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [analiseApiProvider.overrideWithValue(api)],
+        child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
+      ),
+    );
+    router.push('/nova-analise');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nova análise'), findsOneWidget);
+
+    await tester.tap(find.byIcon(LucideIcons.chevronLeft));
+    await tester.pumpAndSettle();
+
+    expect(find.text('tela de historico'), findsOneWidget);
+  });
 
   testWidgets('deveMostrarErrosDeValidacaoQuandoOsDoisCamposEstaoVazios', (
     tester,

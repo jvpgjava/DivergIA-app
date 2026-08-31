@@ -100,7 +100,10 @@ void main() {
         consentimentoApiProvider.overrideWithValue(consentimentoApi),
         historicoApiProvider.overrideWithValue(historicoApi),
         sessionControllerProvider.overrideWith(
-          (ref) => SessionController(SecureTokenStorage()),
+          (ref) => SessionController(
+            SecureTokenStorage(),
+            duracaoMinimaSplash: Duration.zero,
+          ),
         ),
       ],
       child: MaterialApp(theme: AppTheme.light, home: const ProfileScreen()),
@@ -234,6 +237,82 @@ void main() {
 
     verify(() => authApi.logout()).called(1);
   });
+
+  testWidgets('deveAlterarASenhaAoPreencherOFormularioEConfirmar', (
+    tester,
+  ) async {
+    when(
+      () => authApi.alterarSenha(
+        senhaAtual: 'senhaAtual1',
+        novaSenha: 'senhaNova1',
+      ),
+    ).thenAnswer((_) async {});
+
+    await pumpProfileScreen(tester);
+
+    await tester.tap(find.text('Alterar senha'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Sua senha atual'),
+      'senhaAtual1',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Crie uma senha forte'),
+      'senhaNova1',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Repita a nova senha'),
+      'senhaNova1',
+    );
+    await tester.tap(find.text('Salvar nova senha'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => authApi.alterarSenha(
+        senhaAtual: 'senhaAtual1',
+        novaSenha: 'senhaNova1',
+      ),
+    ).called(1);
+    expect(find.text('Senha alterada.'), findsOneWidget);
+  });
+
+  testWidgets(
+    'deveAlterarOEmailAoPreencherOFormularioEConfirmarERefletirNoAvatarCard',
+    (tester) async {
+      final atualizado = Usuario(
+        id: usuario.id,
+        nome: usuario.nome,
+        email: 'novo@example.com',
+        criadoEm: usuario.criadoEm,
+      );
+      when(
+        () => authApi.alterarEmail(
+          novoEmail: 'novo@example.com',
+          senhaAtual: 'senhaAtual1',
+        ),
+      ).thenAnswer((_) async => atualizado);
+
+      await pumpProfileScreen(tester);
+
+      await tester.tap(find.text('Alterar e-mail'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'novo@email.com'),
+        'novo@example.com',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, 'Confirme sua senha'),
+        'senhaAtual1',
+      );
+      await tester.tap(find.text('Salvar novo e-mail'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('E-mail alterado.'), findsOneWidget);
+      expect(find.text('novo@example.com'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     'deveAbrirOBottomSheetDeConsentimentoEAtualizarAoAlternarUmSwitch',

@@ -1,7 +1,9 @@
 import 'package:divergia_app/core/network/api_exception.dart';
+import 'package:divergia_app/core/storage/secure_token_storage.dart';
 import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
 import 'package:divergia_app/features/auth/presentation/login_screen.dart';
+import 'package:divergia_app/features/auth/presentation/session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage_platform_interface/flutter_secure_storage_platform_interface.dart';
@@ -78,7 +80,18 @@ void main() {
       ],
     );
     return ProviderScope(
-      overrides: [authApiProvider.overrideWithValue(authApi)],
+      overrides: [
+        authApiProvider.overrideWithValue(authApi),
+        // Sem isso, o Timer da espera mínima de splash (ver
+        // `SessionController.duracaoMinimaSplash`) fica pendente no fim do
+        // teste — nenhum destes testes envolve a splash de verdade.
+        sessionControllerProvider.overrideWith(
+          (ref) => SessionController(
+            ref.watch(secureTokenStorageProvider),
+            duracaoMinimaSplash: Duration.zero,
+          ),
+        ),
+      ],
       child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
     );
   }

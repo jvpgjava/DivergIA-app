@@ -2,7 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -121,11 +123,32 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Nova análise',
-                      style: AppTypography.titleMedium(
-                        context,
-                      ).copyWith(fontSize: 22),
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () => context.pop(),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: context.colors.surfaceInput,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              LucideIcons.chevronLeft,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Nova análise',
+                          style: AppTypography.titleMedium(
+                            context,
+                          ).copyWith(fontSize: 22),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(

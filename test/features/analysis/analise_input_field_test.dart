@@ -37,12 +37,12 @@ void main() {
     final controller = TextEditingController();
     await tester.pumpWidget(build(controller: controller));
 
-    expect(find.text('0 / 1000 caract.'), findsOneWidget);
+    expect(find.text('0 / 10000 caract.'), findsOneWidget);
 
     await tester.enterText(find.byType(TextField), 'abc');
     await tester.pump();
 
-    expect(find.text('3 / 1000 caract.'), findsOneWidget);
+    expect(find.text('3 / 10000 caract.'), findsOneWidget);
   });
 
   testWidgets('deveMostrarMensagemDeErroQuandoInformada', (tester) async {

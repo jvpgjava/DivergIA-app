@@ -7,12 +7,17 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockHistoricoApi extends Mock implements HistoricoApi {}
 
-AnaliseResumo _item(String id, {String preview = 'preview'}) => AnaliseResumo(
+AnaliseResumo _item(
+  String id, {
+  String preview = 'preview',
+  int? pontuacao = 50,
+  String? tipoDesvio = 'SENTIDO',
+}) => AnaliseResumo(
   id: id,
   criadoEm: DateTime.now(),
   textoRetido: true,
-  pontuacaoIntensidade: 50,
-  tipoDesvioPrincipal: 'SENTIDO',
+  pontuacaoIntensidade: pontuacao,
+  tipoDesvioPrincipal: tipoDesvio,
   textoPreview: preview,
 );
 
@@ -85,5 +90,84 @@ void main() {
     controller.carregarMais();
 
     expect(controller.state.quantidadeVisivel, 10);
+  });
+
+  test('filtrarPorTipoDeveMostrarSoOsItensDoTipoEscolhido', () async {
+    when(() => api.listar()).thenAnswer(
+      (_) async => [
+        _item('1', tipoDesvio: 'SENTIDO'),
+        _item('2', tipoDesvio: 'POSICAO'),
+        _item('3', tipoDesvio: 'SENTIDO'),
+      ],
+    );
+    final controller = HistoricoController(api);
+    await Future<void>.delayed(Duration.zero);
+
+    controller.filtrarPorTipo('SENTIDO');
+
+    expect(controller.state.temFiltroAtivo, isTrue);
+    expect(controller.state.itensFiltrados.map((e) => e.id), ['1', '3']);
+
+    controller.filtrarPorTipo(null);
+
+    expect(controller.state.temFiltroAtivo, isFalse);
+    expect(controller.state.itensFiltrados, hasLength(3));
+  });
+
+  test('ordenarPorMaiorIntensidadeDeveReordenarDoMaiorParaOMenor', () async {
+    when(() => api.listar()).thenAnswer(
+      (_) async => [
+        _item('baixa', pontuacao: 20),
+        _item('alta', pontuacao: 90),
+        _item('media', pontuacao: 50),
+      ],
+    );
+    final controller = HistoricoController(api);
+    await Future<void>.delayed(Duration.zero);
+
+    controller.ordenarPor(OrdenacaoHistorico.maiorIntensidade);
+
+    expect(controller.state.itensFiltrados.map((e) => e.id), [
+      'alta',
+      'media',
+      'baixa',
+    ]);
+  });
+
+  test('ordenarPorMenorIntensidadeDeveReordenarDoMenorParaOMaior', () async {
+    when(() => api.listar()).thenAnswer(
+      (_) async => [
+        _item('baixa', pontuacao: 20),
+        _item('alta', pontuacao: 90),
+        _item('media', pontuacao: 50),
+      ],
+    );
+    final controller = HistoricoController(api);
+    await Future<void>.delayed(Duration.zero);
+
+    controller.ordenarPor(OrdenacaoHistorico.menorIntensidade);
+
+    expect(controller.state.itensFiltrados.map((e) => e.id), [
+      'baixa',
+      'media',
+      'alta',
+    ]);
+  });
+
+  test('filtroEBuscaDevemSeCombinar', () async {
+    when(() => api.listar()).thenAnswer(
+      (_) async => [
+        _item('1', preview: 'texto sobre gatos', tipoDesvio: 'SENTIDO'),
+        _item('2', preview: 'texto sobre cachorros', tipoDesvio: 'SENTIDO'),
+        _item('3', preview: 'texto sobre gatos', tipoDesvio: 'POSICAO'),
+      ],
+    );
+    final controller = HistoricoController(api);
+    await Future<void>.delayed(Duration.zero);
+
+    controller.buscar('gatos');
+    controller.filtrarPorTipo('SENTIDO');
+
+    expect(controller.state.itensFiltrados.map((e) => e.id), ['1']);
   });
 }

@@ -34,22 +34,27 @@ class ScoreCard extends StatelessWidget {
           SizedBox(
             width: 64,
             height: 64,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularProgressIndicator(
-                  value: pontuacao / 100,
-                  strokeWidth: 6,
-                  backgroundColor: colors.border,
-                  valueColor: AlwaysStoppedAnimation<Color>(cor.fg),
-                ),
-                Text(
-                  '$pontuacao',
-                  style: AppTypography.titleMedium(
-                    context,
-                  ).copyWith(fontSize: 16),
-                ),
-              ],
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: pontuacao.toDouble()),
+              duration: const Duration(milliseconds: 900),
+              curve: Curves.easeOutCubic,
+              builder: (context, valorAnimado, _) => Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: valorAnimado / 100,
+                    strokeWidth: 6,
+                    backgroundColor: colors.border,
+                    valueColor: AlwaysStoppedAnimation<Color>(cor.fg),
+                  ),
+                  Text(
+                    '${valorAnimado.round()}',
+                    style: AppTypography.titleMedium(
+                      context,
+                    ).copyWith(fontSize: 16),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 16),

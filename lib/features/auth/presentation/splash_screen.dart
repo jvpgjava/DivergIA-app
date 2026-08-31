@@ -16,6 +16,7 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(sessionControllerProvider);
     final colors = context.colors;
+    final modoEscuro = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -35,7 +36,9 @@ class SplashScreen extends ConsumerWidget {
           ),
           Center(
             child: Image.asset(
-              'assets/images/logo_divergia.png',
+              modoEscuro
+                  ? 'assets/icon/divergia-icon-dark.png'
+                  : 'assets/icon/divergia-icon-light.png',
               key: const Key('splash-logo'),
               width: 228,
             ),

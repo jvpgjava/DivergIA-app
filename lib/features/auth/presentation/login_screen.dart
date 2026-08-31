@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
@@ -132,25 +131,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SocialButton(
-                        icon: LucideIcons.circleX,
-                        label: 'Google',
-                        onTap: _avisarEmBreve,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _SocialButton(
-                        icon: LucideIcons.apple,
-                        label: 'Apple',
-                        onTap: _avisarEmBreve,
-                      ),
-                    ),
-                  ],
-                ),
+                _SocialButton(label: 'Google', onTap: _avisarEmBreve),
                 const SizedBox(height: 32),
                 Wrap(
                   alignment: WrapAlignment.center,
@@ -182,13 +163,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
+  const _SocialButton({required this.label, required this.onTap});
 
-  final IconData icon;
   final String label;
   final VoidCallback onTap;
 
@@ -199,6 +175,7 @@ class _SocialButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         height: 48,
+        width: double.infinity,
         decoration: BoxDecoration(
           border: Border.all(color: context.colors.border),
           borderRadius: BorderRadius.circular(12),
@@ -206,7 +183,14 @@ class _SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: context.colors.textPrimary),
+            const Text(
+              'G',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF4285F4),
+              ),
+            ),
             const SizedBox(width: 8),
             Text(
               label,

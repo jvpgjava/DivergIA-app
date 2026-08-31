@@ -59,7 +59,10 @@ void main() {
   setUp(() {
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
     authApi = _MockAuthApi();
-    sessionController = SessionController(SecureTokenStorage());
+    sessionController = SessionController(
+      SecureTokenStorage(),
+      duracaoMinimaSplash: Duration.zero,
+    );
     controller = SignupController(authApi, sessionController);
   });
 

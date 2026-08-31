@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
@@ -54,6 +55,39 @@ class AuthApi {
     '/api/auth/redefinir-senha',
     data: {'token': token, 'novaSenha': novaSenha},
   );
+
+  Future<void> alterarSenha({
+    required String senhaAtual,
+    required String novaSenha,
+  }) => _client.put<void>(
+    '/api/auth/senha',
+    data: {'senhaAtual': senhaAtual, 'novaSenha': novaSenha},
+  );
+
+  Future<Usuario> alterarEmail({
+    required String novoEmail,
+    required String senhaAtual,
+  }) async {
+    final response = await _client.put<Map<String, dynamic>>(
+      '/api/auth/email',
+      data: {'novoEmail': novoEmail, 'senhaAtual': senhaAtual},
+    );
+    return Usuario.fromJson(response.data!);
+  }
+
+  Future<String> atualizarFotoPerfil({
+    required List<int> bytes,
+    required String nomeArquivo,
+  }) async {
+    final formData = FormData.fromMap({
+      'foto': MultipartFile.fromBytes(bytes, filename: nomeArquivo),
+    });
+    final response = await _client.post<Map<String, dynamic>>(
+      '/api/auth/foto',
+      data: formData,
+    );
+    return response.data!['fotoUrl'] as String;
+  }
 }
 
 final authApiProvider = Provider<AuthApi>((ref) {

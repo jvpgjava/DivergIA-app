@@ -6,12 +6,18 @@ import '../data/models/analise_resumo.dart';
 
 const _tamanhoPagina = 10;
 
+/// `null` = sem ordenação especial (mais recente primeiro, ordem do
+/// backend); as demais reordenam a lista já carregada no app.
+enum OrdenacaoHistorico { recentes, maiorIntensidade, menorIntensidade }
+
 class HistoricoState {
   const HistoricoState({
     this.loading = true,
     this.errorMessage,
     this.itens = const [],
     this.busca = '',
+    this.filtroTipo,
+    this.ordenacao = OrdenacaoHistorico.recentes,
     this.quantidadeVisivel = _tamanhoPagina,
   });
 
@@ -19,16 +25,51 @@ class HistoricoState {
   final String? errorMessage;
   final List<AnaliseResumo> itens;
   final String busca;
+
+  /// `null` = "Todos"; caso contrário, um dos valores de `tipoDesvioPrincipal`
+  /// vindos do backend ("SENTIDO", "POSICAO", "INTENSIDADE").
+  final String? filtroTipo;
+  final OrdenacaoHistorico ordenacao;
   final int quantidadeVisivel;
 
+  bool get temFiltroAtivo => filtroTipo != null;
+
   List<AnaliseResumo> get itensFiltrados {
-    if (busca.trim().isEmpty) return itens;
-    final termo = busca.trim().toLowerCase();
-    return itens
-        .where(
-          (item) => (item.textoPreview ?? '').toLowerCase().contains(termo),
-        )
-        .toList();
+    var resultado = itens;
+
+    if (busca.trim().isNotEmpty) {
+      final termo = busca.trim().toLowerCase();
+      resultado = resultado
+          .where(
+            (item) => (item.textoPreview ?? '').toLowerCase().contains(termo),
+          )
+          .toList();
+    }
+
+    if (filtroTipo != null) {
+      resultado = resultado
+          .where((item) => item.tipoDesvioPrincipal == filtroTipo)
+          .toList();
+    }
+
+    switch (ordenacao) {
+      case OrdenacaoHistorico.recentes:
+        break;
+      case OrdenacaoHistorico.maiorIntensidade:
+        resultado = [...resultado]..sort(
+          (a, b) => (b.pontuacaoIntensidade ?? -1).compareTo(
+            a.pontuacaoIntensidade ?? -1,
+          ),
+        );
+      case OrdenacaoHistorico.menorIntensidade:
+        resultado = [...resultado]..sort(
+          (a, b) => (a.pontuacaoIntensidade ?? 999).compareTo(
+            b.pontuacaoIntensidade ?? 999,
+          ),
+        );
+    }
+
+    return resultado;
   }
 
   List<AnaliseResumo> get itensPaginados =>
@@ -41,12 +82,16 @@ class HistoricoState {
     String? errorMessage,
     List<AnaliseResumo>? itens,
     String? busca,
+    String? Function()? filtroTipo,
+    OrdenacaoHistorico? ordenacao,
     int? quantidadeVisivel,
   }) => HistoricoState(
     loading: loading ?? this.loading,
     errorMessage: errorMessage,
     itens: itens ?? this.itens,
     busca: busca ?? this.busca,
+    filtroTipo: filtroTipo != null ? filtroTipo() : this.filtroTipo,
+    ordenacao: ordenacao ?? this.ordenacao,
     quantidadeVisivel: quantidadeVisivel ?? this.quantidadeVisivel,
   );
 }
@@ -74,6 +119,20 @@ class HistoricoController extends StateNotifier<HistoricoState> {
 
   void buscar(String termo) {
     state = state.copyWith(busca: termo, quantidadeVisivel: _tamanhoPagina);
+  }
+
+  void filtrarPorTipo(String? tipo) {
+    state = state.copyWith(
+      filtroTipo: () => tipo,
+      quantidadeVisivel: _tamanhoPagina,
+    );
+  }
+
+  void ordenarPor(OrdenacaoHistorico ordenacao) {
+    state = state.copyWith(
+      ordenacao: ordenacao,
+      quantidadeVisivel: _tamanhoPagina,
+    );
   }
 
   void carregarMais() {

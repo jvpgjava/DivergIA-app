@@ -177,4 +177,137 @@ void main() {
     expect(sucesso, isFalse);
     verifyNever(() => sessionController.onLogout());
   });
+
+  test('alterarSenhaComSucessoDeveDevolverNull', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    when(
+      () => authApi.alterarSenha(
+        senhaAtual: 'atual123',
+        novaSenha: 'nova12345',
+      ),
+    ).thenAnswer((_) async {});
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.alterarSenha(
+      senhaAtual: 'atual123',
+      novaSenha: 'nova12345',
+    );
+
+    expect(erro, isNull);
+  });
+
+  test('alterarSenhaComFalhaDeveDevolverAMensagemDeErro', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    when(
+      () => authApi.alterarSenha(
+        senhaAtual: any(named: 'senhaAtual'),
+        novaSenha: any(named: 'novaSenha'),
+      ),
+    ).thenThrow(const ValidationException('senhaAtual incorreta'));
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.alterarSenha(
+      senhaAtual: 'errada',
+      novaSenha: 'nova12345',
+    );
+
+    expect(erro, 'senhaAtual incorreta');
+  });
+
+  test('alterarEmailComSucessoDeveAtualizarOUsuarioNoEstado', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    final atualizado = Usuario(
+      id: usuario.id,
+      nome: usuario.nome,
+      email: 'novo@example.com',
+      criadoEm: usuario.criadoEm,
+    );
+    when(
+      () => authApi.alterarEmail(
+        novoEmail: 'novo@example.com',
+        senhaAtual: 'atual123',
+      ),
+    ).thenAnswer((_) async => atualizado);
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.alterarEmail(
+      novoEmail: 'novo@example.com',
+      senhaAtual: 'atual123',
+    );
+
+    expect(erro, isNull);
+    expect(controller.state.usuario, atualizado);
+  });
+
+  test('alterarEmailComFalhaDeveDevolverAMensagemDeErroSemAlterarOEstado', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    when(
+      () => authApi.alterarEmail(
+        novoEmail: any(named: 'novoEmail'),
+        senhaAtual: any(named: 'senhaAtual'),
+      ),
+    ).thenThrow(const ValidationException('email já em uso'));
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.alterarEmail(
+      novoEmail: 'novo@example.com',
+      senhaAtual: 'atual123',
+    );
+
+    expect(erro, 'email já em uso');
+    expect(controller.state.usuario, usuario);
+  });
+
+  test('atualizarFotoPerfilComSucessoDeveAtualizarAFotoUrlNoEstado', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    when(
+      () => authApi.atualizarFotoPerfil(
+        bytes: any(named: 'bytes'),
+        nomeArquivo: any(named: 'nomeArquivo'),
+      ),
+    ).thenAnswer((_) async => 'https://api-hml-divergia.jgnx.com.br/uploads/foto.jpg');
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.atualizarFotoPerfil(
+      bytes: [1, 2, 3],
+      nomeArquivo: 'foto.jpg',
+    );
+
+    expect(erro, isNull);
+    expect(
+      controller.state.usuario?.fotoUrl,
+      'https://api-hml-divergia.jgnx.com.br/uploads/foto.jpg',
+    );
+  });
+
+  test('atualizarFotoPerfilComFalhaDeveDevolverAMensagemDeErro', () async {
+    when(() => authApi.me()).thenAnswer((_) async => usuario);
+    when(() => consentimentoApi.obter()).thenAnswer((_) async => consentimento);
+    when(
+      () => authApi.atualizarFotoPerfil(
+        bytes: any(named: 'bytes'),
+        nomeArquivo: any(named: 'nomeArquivo'),
+      ),
+    ).thenThrow(const ServerException());
+    final controller = criarController();
+    await Future<void>.delayed(Duration.zero);
+
+    final erro = await controller.atualizarFotoPerfil(
+      bytes: [1, 2, 3],
+      nomeArquivo: 'foto.jpg',
+    );
+
+    expect(erro, isNotNull);
+    expect(controller.state.usuario?.fotoUrl, isNull);
+  });
 }

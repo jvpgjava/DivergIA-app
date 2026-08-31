@@ -8,6 +8,7 @@ import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/deriva_formatting.dart';
+import '../../../core/widgets/fade_slide_in.dart';
 import '../data/models/painel_tendencia.dart';
 import '../data/models/ponto_tendencia.dart';
 import 'tendencia_controller.dart';
@@ -133,34 +134,42 @@ class _Conteudo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                rotulo: 'Análises',
-                valor: '${painel.totalAnalises}',
+        FadeSlideIn(
+          child: Row(
+            children: [
+              Expanded(
+                child: _StatCard(
+                  rotulo: 'Análises',
+                  valor: '${painel.totalAnalises}',
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _StatCard(
-                rotulo: 'Divergências',
-                valor: '${painel.totalDerivas}',
+              const SizedBox(width: 12),
+              Expanded(
+                child: _StatCard(
+                  rotulo: 'Divergências',
+                  valor: '${painel.totalDerivas}',
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _StatCard(
-                rotulo: 'Intensidade média',
-                valor: '${(painel.intensidadeMedia * 100).round()} pts',
+              const SizedBox(width: 12),
+              Expanded(
+                child: _StatCard(
+                  rotulo: 'Intensidade média',
+                  valor: '${(painel.intensidadeMedia * 100).round()} pts',
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 16),
-        _EvolucaoCard(pontos: painel.evolucaoMensal),
+        FadeSlideIn(
+          atraso: atrasoEmCascata(1),
+          child: _EvolucaoCard(pontos: painel.evolucaoMensal),
+        ),
         const SizedBox(height: 16),
-        _DistribuicaoCard(derivasPorTipo: painel.derivasPorTipo),
+        FadeSlideIn(
+          atraso: atrasoEmCascata(2),
+          child: _DistribuicaoCard(derivasPorTipo: painel.derivasPorTipo),
+        ),
       ],
     );
   }

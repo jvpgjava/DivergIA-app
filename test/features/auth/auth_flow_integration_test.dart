@@ -111,6 +111,13 @@ void main() {
 
       // 1ª "abertura" do app: sem sessão salva, cai no login.
       await tester.pumpWidget(buildRealApp());
+      // `pumpAndSettle` sozinho não é suficiente aqui: ele para de pumpar
+      // assim que não há mais nenhum frame agendado, e a splash — sem
+      // nenhuma animação contínua — não agenda frame nenhum enquanto só
+      // espera a `duracaoMinimaSplash` (ver `SessionController`). Sem
+      // avançar o relógio explicitamente por esse tanto, o teste segue pra
+      // frente com a sessão ainda em "checking".
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
       expect(find.text('Bem-vindo'), findsOneWidget);
 
@@ -134,6 +141,7 @@ void main() {
       // a sessão salva deve pular o login e ir direto pro histórico.
       await tester.pumpWidget(Container());
       await tester.pumpWidget(buildRealApp());
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       expect(find.text('Minhas análises'), findsOneWidget);
