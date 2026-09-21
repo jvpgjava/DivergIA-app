@@ -136,6 +136,8 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                     atraso: atrasoEmCascata(indice + 1),
                     child: TrechoResultCard(
                       trecho: trecho,
+                      textoOriginalCompleto: resultado.textoOriginal,
+                      textoEditadoCompleto: resultado.textoEditado,
                       onSugerirReescrita: () => _abrirSugestaoDeReescrita(trecho),
                     ),
                   ),

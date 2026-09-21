@@ -10,18 +10,23 @@ import '../../data/models/trecho_deriva.dart';
 /// "Comparison-Stack" + "Explanation-Banner" do Figma ("analysis-results"),
 /// repetidos uma vez por trecho de deriva de uma análise.
 ///
-/// O Figma sublinha só a frase específica que mudou dentro de uma frase
-/// maior, mas o backend só entrega o trecho isolado (não o texto ao redor),
-/// então aqui o trecho inteiro é destacado — é o mais fiel possível ao dado
-/// real disponível.
+/// O Figma sublinha só a frase específica que mudou dentro do texto
+/// completo. Quando o backend devolve o texto bruto (`textoOriginalCompleto`/
+/// `textoEditadoCompleto` — nulos se o usuário não reteve histórico), é
+/// exatamente isso que aparece aqui, com o trecho de deriva destacado; sem o
+/// texto completo, cai de volta a mostrar só o trecho isolado.
 class TrechoResultCard extends StatelessWidget {
   const TrechoResultCard({
     super.key,
     required this.trecho,
     required this.onSugerirReescrita,
+    this.textoOriginalCompleto,
+    this.textoEditadoCompleto,
   });
 
   final TrechoDeriva trecho;
+  final String? textoOriginalCompleto;
+  final String? textoEditadoCompleto;
   final VoidCallback onSugerirReescrita;
 
   @override
@@ -30,9 +35,17 @@ class TrechoResultCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Painel(rotulo: 'TEXTO ORIGINAL', texto: trecho.trechoOriginal),
+        _Painel(
+          rotulo: 'TEXTO ORIGINAL',
+          textoCompleto: textoOriginalCompleto,
+          trechoDestacado: trecho.trechoOriginal,
+        ),
         const SizedBox(height: 8),
-        _Painel(rotulo: 'TEXTO EDITADO', texto: trecho.trechoEditado),
+        _Painel(
+          rotulo: 'TEXTO EDITADO',
+          textoCompleto: textoEditadoCompleto,
+          trechoDestacado: trecho.trechoEditado,
+        ),
         const SizedBox(height: 12),
         _ExplanationBanner(trecho: trecho),
         if (trecho.sugestaoAceita != null) ...[
@@ -64,14 +77,29 @@ class TrechoResultCard extends StatelessWidget {
 }
 
 class _Painel extends StatelessWidget {
-  const _Painel({required this.rotulo, required this.texto});
+  const _Painel({
+    required this.rotulo,
+    required this.textoCompleto,
+    required this.trechoDestacado,
+  });
 
   final String rotulo;
-  final String texto;
+  final String? textoCompleto;
+  final String trechoDestacado;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final baseStyle = AppTypography.bodyEmphasis(
+      context,
+    ).copyWith(color: colors.textPrimary);
+    final highlightStyle = baseStyle.copyWith(
+      color: AppColors.explanationBannerFg,
+      fontWeight: FontWeight.w700,
+      decoration: TextDecoration.underline,
+      decorationColor: AppColors.explanationBannerFg,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -90,17 +118,50 @@ class _Painel extends StatelessWidget {
             ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 0.4),
           ),
           const SizedBox(height: 6),
-          Text(
-            texto,
-            style: AppTypography.bodyEmphasis(context).copyWith(
-              color: AppColors.explanationBannerFg,
-              decoration: TextDecoration.underline,
-              decorationColor: AppColors.explanationBannerFg,
+          Text.rich(
+            TextSpan(
+              children: _spansDestacados(
+                textoCompleto: textoCompleto,
+                trecho: trechoDestacado,
+                baseStyle: baseStyle,
+                highlightStyle: highlightStyle,
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  /// Divide `textoCompleto` em torno da primeira ocorrência de `trecho`,
+  /// destacando só essa ocorrência — mesmo comportamento do sublinhado no
+  /// Figma. Sem `textoCompleto` (retenção desligada) ou se o trecho não é
+  /// encontrado literalmente nele (LLM pode parafrasear ao extrair), cai de
+  /// volta a mostrar só o trecho isolado e destacado por inteiro.
+  List<TextSpan> _spansDestacados({
+    required String? textoCompleto,
+    required String trecho,
+    required TextStyle baseStyle,
+    required TextStyle highlightStyle,
+  }) {
+    if (textoCompleto == null) {
+      return [TextSpan(text: trecho, style: highlightStyle)];
+    }
+    final indice = textoCompleto.indexOf(trecho);
+    if (indice == -1) {
+      return [TextSpan(text: trecho, style: highlightStyle)];
+    }
+    return [
+      TextSpan(text: textoCompleto.substring(0, indice), style: baseStyle),
+      TextSpan(
+        text: textoCompleto.substring(indice, indice + trecho.length),
+        style: highlightStyle,
+      ),
+      TextSpan(
+        text: textoCompleto.substring(indice + trecho.length),
+        style: baseStyle,
+      ),
+    ];
   }
 }
 

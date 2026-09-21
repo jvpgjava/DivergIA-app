@@ -61,6 +61,44 @@ void main() {
   });
 
   testWidgets(
+    'deveDestacarSoOTrechoDentroDoTextoCompletoQuandoDisponivel',
+    (tester) async {
+      when(() => api.buscar('abc-123')).thenAnswer(
+        (_) async => ResultadoAnalise(
+          analiseId: 'abc-123',
+          criadoEm: DateTime.now(),
+          textoOriginal: 'o prazo é de dois anos para concluir o projeto',
+          textoEditado: 'o prazo é rápido para concluir o projeto',
+          trechos: const [
+            TrechoDeriva(
+              id: 't1',
+              tipoDesvio: 'SENTIDO',
+              trechoOriginal: 'de dois anos',
+              trechoEditado: 'rápido',
+              explicacao: 'a explicação do desvio',
+              intensidade: 0.72,
+            ),
+          ],
+        ),
+      );
+
+      await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
+
+      // O texto completo aparece por inteiro (não só o trecho isolado) —
+      // fidelidade ao Figma, que sublinha a frase dentro do contexto.
+      expect(
+        find.text('o prazo é de dois anos para concluir o projeto'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('o prazo é rápido para concluir o projeto'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
     'deveMostrarMultiplosTrechosQuandoAAnaliseTemMaisDeUmaDivergencia',
     (tester) async {
       when(() => api.buscar('abc-123')).thenAnswer(
