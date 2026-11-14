@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
-/// Botão principal em pílula com gradiente (Figma: "Primary-Button"),
-/// usado em login, cadastro e ações de destaque nas próximas fases.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,

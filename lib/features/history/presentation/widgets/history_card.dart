@@ -7,7 +7,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
 import '../../data/models/analise_resumo.dart';
 
-/// Card de uma análise na lista de histórico — Figma: "History-Card".
 class HistoryCard extends StatelessWidget {
   const HistoryCard({super.key, required this.analise, required this.onTap});
 

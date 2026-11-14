@@ -5,10 +5,6 @@ import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import 'session_controller.dart';
 
-/// Só a marca + loading enquanto [SessionController] verifica se há uma
-/// sessão válida salva — quem decide pra onde ir depois é o `redirect` do
-/// go_router (ver `app_router.dart`), reagindo à mudança de
-/// [SessionStatus].
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 

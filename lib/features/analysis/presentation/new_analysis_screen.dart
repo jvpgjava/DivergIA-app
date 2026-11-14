@@ -2,12 +2,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../../core/widgets/screen_back_header.dart';
+import '../../../core/utils/validacao_texto.dart';
 import '../data/models/arquivo_selecionado.dart';
 import 'nova_analise_controller.dart';
 import 'widgets/analise_input_field.dart';
@@ -24,9 +24,6 @@ const _extensoesAceitas = [
   'htm',
 ];
 
-/// Tela "Nova análise" — fidelidade ao frame "new-analysis-input" do
-/// Figma (o carregamento fiel a "analysis-loading" fica em
-/// [AnalysisLoadingView]).
 class NewAnalysisScreen extends ConsumerStatefulWidget {
   const NewAnalysisScreen({super.key});
 
@@ -43,10 +40,27 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
   String? _erroEditado;
 
   @override
+  void initState() {
+    super.initState();
+    _originalController.addListener(_aoEditar);
+    _editadoController.addListener(_aoEditar);
+  }
+
+  @override
   void dispose() {
     _originalController.dispose();
     _editadoController.dispose();
     super.dispose();
+  }
+
+  void _aoEditar() {
+    ref.read(novaAnaliseControllerProvider.notifier).limparErros();
+    if (_erroOriginal != null || _erroEditado != null) {
+      setState(() {
+        _erroOriginal = null;
+        _erroEditado = null;
+      });
+    }
   }
 
   Future<ArquivoSelecionado?> _escolherArquivo() async {
@@ -81,29 +95,48 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
   }
 
   Future<void> _submit() async {
-    final temOriginal =
-        _arquivoOriginal != null || _originalController.text.trim().isNotEmpty;
-    final temEditado =
-        _arquivoEditado != null || _editadoController.text.trim().isNotEmpty;
+    FocusScope.of(context).unfocus();
+    final controller = ref.read(novaAnaliseControllerProvider.notifier);
+    controller.limparErros();
+
+    // Arquivos só podem ser validados pelo servidor, depois da extração do texto.
+    var erroOriginal = _arquivoOriginal != null
+        ? null
+        : validarTextoDaAnalise(
+            _originalController.text,
+            rotulo: 'texto original',
+          );
+    var erroEditado = _arquivoEditado != null
+        ? null
+        : validarTextoDaAnalise(
+            _editadoController.text,
+            rotulo: 'texto editado',
+          );
+    if (erroOriginal == null &&
+        erroEditado == null &&
+        _arquivoOriginal == null &&
+        _arquivoEditado == null &&
+        textosIdenticos(_originalController.text, _editadoController.text)) {
+      erroEditado =
+          'O texto editado é igual ao original: não há edição para comparar.';
+    }
 
     setState(() {
-      _erroOriginal = temOriginal ? null : 'Cole o texto ou anexe um arquivo';
-      _erroEditado = temEditado ? null : 'Cole o texto ou anexe um arquivo';
+      _erroOriginal = erroOriginal;
+      _erroEditado = erroEditado;
     });
-    if (!temOriginal || !temEditado) return;
+    if (erroOriginal != null || erroEditado != null) return;
 
-    final resultado = await ref
-        .read(novaAnaliseControllerProvider.notifier)
-        .analisar(
-          textoOriginal: _arquivoOriginal == null
-              ? _originalController.text.trim()
-              : null,
-          arquivoOriginal: _arquivoOriginal,
-          textoEditado: _arquivoEditado == null
-              ? _editadoController.text.trim()
-              : null,
-          arquivoEditado: _arquivoEditado,
-        );
+    final resultado = await controller.analisar(
+      textoOriginal: _arquivoOriginal == null
+          ? limparTexto(_originalController.text)
+          : null,
+      arquivoOriginal: _arquivoOriginal,
+      textoEditado: _arquivoEditado == null
+          ? limparTexto(_editadoController.text)
+          : null,
+      arquivoEditado: _arquivoEditado,
+    );
 
     if (resultado != null && mounted) {
       context.pushReplacement('/historico/${resultado.analiseId}');
@@ -123,33 +156,7 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        InkWell(
-                          onTap: () => context.pop(),
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: context.colors.surfaceInput,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: const Icon(
-                              LucideIcons.chevronLeft,
-                              size: 16,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Nova análise',
-                          style: AppTypography.titleMedium(
-                            context,
-                          ).copyWith(fontSize: 22),
-                        ),
-                      ],
-                    ),
+                    const ScreenBackHeader(titulo: 'Nova análise'),
                     const SizedBox(height: 4),
                     Text(
                       'Identifique alterações feitas pela IA',
@@ -161,7 +168,7 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                       hint: 'Cole aqui o texto que você escreveu...',
                       controller: _originalController,
                       arquivo: _arquivoOriginal,
-                      errorText: _erroOriginal,
+                      errorText: _erroOriginal ?? state.erroOriginal,
                       onAnexar: _anexarOriginal,
                       onRemoverArquivo: () =>
                           setState(() => _arquivoOriginal = null),
@@ -172,7 +179,7 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
                       hint: 'Cole aqui a versão devolvida pela IA...',
                       controller: _editadoController,
                       arquivo: _arquivoEditado,
-                      errorText: _erroEditado,
+                      errorText: _erroEditado ?? state.erroEditado,
                       onAnexar: _anexarEditado,
                       onRemoverArquivo: () =>
                           setState(() => _arquivoEditado = null),

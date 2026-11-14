@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_color_tokens.dart';
 
-/// Modal bottom sheet padronizado do app — cantos arredondados, alça de
-/// arrastar e rolagem interna que evita o teclado, em vez do
-/// [showModalBottomSheet] cru (cantos quadrados, sem alça, e sem rolagem —
-/// o que causava overflow quando o teclado abria em cima de um formulário
-/// com vários campos, como "Alterar senha").
 Future<T?> showAppBottomSheet<T>(
   BuildContext context, {
   required WidgetBuilder builder,
@@ -35,7 +30,9 @@ class _AppBottomSheetShell extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SingleChildScrollView(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

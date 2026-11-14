@@ -35,10 +35,6 @@ String _rotuloMes(String mes) {
   return _mesesAbrev[indice - 1];
 }
 
-/// Tela "Painel de Tendência Pessoal" — Fase 7. Sem referência no Figma
-/// original (roadmap explicitamente marca essa tela como sem design de
-/// referência); segue a linguagem visual das demais telas (cards brancos
-/// arredondados, cabeçalho com botão de voltar, paleta do tema).
 class TendenciaScreen extends ConsumerWidget {
   const TendenciaScreen({super.key});
 

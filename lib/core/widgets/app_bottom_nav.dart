@@ -6,9 +6,6 @@ import '../theme/app_typography.dart';
 
 enum AppNavTab { historico, perfil }
 
-/// Barra de navegação inferior (Figma: frame "Bottom-Nav"). O botão central
-/// não é uma aba selecionável — é uma ação que sempre abre "Nova análise",
-/// por isso não participa do [selected].
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,

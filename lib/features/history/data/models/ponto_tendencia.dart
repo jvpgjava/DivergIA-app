@@ -1,5 +1,3 @@
-/// Espelha `PontoTendenciaResponse` do backend — um mês agregado do painel
-/// de tendência (`GET /api/historico/tendencia`).
 class PontoTendencia {
   const PontoTendencia({
     required this.mes,
@@ -15,7 +13,6 @@ class PontoTendencia {
     intensidadeMedia: (json['intensidadeMedia'] as num).toDouble(),
   );
 
-  /// Formato `yyyy-MM` (`YearMonth.toString()` do backend).
   final String mes;
   final int quantidadeAnalises;
   final int quantidadeDerivas;

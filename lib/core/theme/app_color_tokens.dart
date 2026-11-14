@@ -1,15 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Tokens de cor que MUDAM entre claro/escuro (fundo, borda, texto...) —
-/// extraídos dos pares de frame do Figma ("profile-settings" /
-/// "profile-settings-dark"). Cores de marca/estado (primary, danger,
-/// score*, explanationBanner*) não entram aqui: o Figma mostra que elas se
-/// mantêm idênticas nos dois temas, então continuam em [AppColors] como
-/// constantes fixas.
-///
-/// Acesse sempre via `context.colors.xxx` (ver [AppColorTokensX]), nunca
-/// instanciando ou importando `light`/`dark` diretamente fora do
-/// [core/theme/app_theme.dart].
 @immutable
 class AppColorTokens extends ThemeExtension<AppColorTokens> {
   const AppColorTokens({
@@ -37,21 +27,11 @@ class AppColorTokens extends ThemeExtension<AppColorTokens> {
   final Color screenBackground;
   final Color primaryTint;
 
-  // Fundos de estado (Score-Badge, Explanation-Banner) — no Figma claro são
-  // um tom pastel sólido; no escuro viram o próprio tom "Fg" em baixa
-  // opacidade (mesmo padrão observado no Avatar-Card: `primaryTint` sólido
-  // no claro vira `primary` a 10% no escuro). Os "Fg" continuam fixos em
-  // [AppColors] — só o fundo muda.
   final Color scoreAltoBg;
   final Color scoreMedioBg;
   final Color scoreBaixoBg;
   final Color explanationBannerBg;
 
-  /// Fundo de botão-ícone que precisa de bastante contraste sobre o
-  /// próprio fundo do tema (ex.: "Tab-Add" do Bottom-Nav) — no claro é o
-  /// mesmo tom escuro de `textPrimary`, mas no escuro o Figma troca para um
-  /// ciano vibrante em vez de repetir `textPrimary` (que no escuro é quase
-  /// branco, e ficaria sem contraste com o ícone branco por cima).
   final Color highContrastSurface;
 
   static const light = AppColorTokens(

@@ -85,8 +85,6 @@ void main() {
       await tester.pumpWidget(buildApp());
       await tester.pumpAndSettle();
 
-      // O texto completo aparece por inteiro (não só o trecho isolado) —
-      // fidelidade ao Figma, que sublinha a frase dentro do contexto.
       expect(
         find.text('o prazo é de dois anos para concluir o projeto'),
         findsOneWidget,

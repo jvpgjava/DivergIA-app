@@ -76,6 +76,38 @@ void main() {
     );
   });
 
+  test('deveMapear422ComCodigoECampoDaRecusaDeAnalise', () {
+    final handler = _FakeErrorHandler();
+
+    interceptor.onError(
+      errorWithStatus(
+        422,
+        data: {
+          'message': 'Os textos estão em idiomas diferentes.',
+          'codigo': 'IDIOMAS_DIFERENTES',
+          'campo': 'AMBOS',
+        },
+      ),
+      handler,
+    );
+
+    final erro = handler.passed!.error as ValidationException;
+    expect(erro.message, 'Os textos estão em idiomas diferentes.');
+    expect(erro.codigo, 'IDIOMAS_DIFERENTES');
+    expect(erro.campo, 'AMBOS');
+  });
+
+  test('deveMapear429SemCorpoParaMensagemDeAguardar', () {
+    final handler = _FakeErrorHandler();
+
+    interceptor.onError(errorWithStatus(429, data: ''), handler);
+
+    expect(
+      (handler.passed!.error as ApiException).message,
+      contains('Aguarde um minuto'),
+    );
+  });
+
   test('deveMapearTimeoutParaNetworkException', () {
     final handler = _FakeErrorHandler();
     final timeoutError = DioException(

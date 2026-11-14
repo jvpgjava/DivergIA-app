@@ -29,15 +29,6 @@ const _rotasPublicas = {
   '/redefinir-senha',
 };
 
-/// Rotas principais do app. `redirect` protege as rotas autenticadas e
-/// manda quem já está logado direto pro histórico, com base no
-/// [SessionController] (que também dispara o recheck via
-/// `refreshListenable`, sem recriar o [GoRouter] inteiro a cada mudança de
-/// sessão).
-///
-/// Uma função (em vez de uma instância global única) para que cada teste
-/// possa montar seu próprio [GoRouter] isolado, sem herdar a localização
-/// deixada por um teste anterior.
 GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
   initialLocation: '/splash',
   refreshListenable: sessionController,
@@ -78,9 +69,7 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
           const AppShell(tab: AppNavTab.historico, child: HistoryScreen()),
     ),
     GoRoute(
-      // Precisa vir ANTES de `/historico/:id` — senão o go_router casaria
-      // "tendencia" como o `:id` e abriria o resultado de uma análise
-      // inexistente em vez desta tela.
+      // Precisa vir antes de /historico/:id, senão "tendencia" casa como id.
       path: '/historico/tendencia',
       builder: (context, state) => const TendenciaScreen(),
     ),
@@ -115,10 +104,7 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
   ],
 );
 
-/// `ref.read` (não `watch`) de propósito: o próprio [GoRouter] já escuta o
-/// [SessionController] via `refreshListenable` para reavaliar o
-/// `redirect` — se este provider desse `watch`, o router inteiro seria
-/// recriado a cada mudança de sessão, perdendo a pilha de navegação.
 final routerProvider = Provider<GoRouter>((ref) {
+  // read, não watch: o GoRouter já escuta a sessão via refreshListenable; watch recriaria o router e perderia a pilha.
   return buildAppRouter(ref.read(sessionControllerProvider));
 });

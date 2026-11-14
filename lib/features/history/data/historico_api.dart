@@ -5,8 +5,6 @@ import '../../analysis/data/models/resultado_analise.dart';
 import 'models/analise_resumo.dart';
 import 'models/painel_tendencia.dart';
 
-/// Chamadas HTTP do histórico — espelha `HistoricoController` do backend
-/// (`/api/historico`).
 class HistoricoApi {
   HistoricoApi(this._client);
 

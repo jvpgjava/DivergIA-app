@@ -14,9 +14,6 @@ class _MockAuthApi extends Mock implements AuthApi {}
 
 class _MockHistoricoApi extends Mock implements HistoricoApi {}
 
-/// Guarda estado de verdade (em memória) — usado pra simular "reiniciar o
-/// app" mantendo o que o `flutter_secure_storage` teria persistido de fato
-/// no dispositivo.
 class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
   final Map<String, String> _values = {};
 
@@ -104,24 +101,14 @@ void main() {
         ),
       );
 
-      // A tela de cadastro é mais alta que o viewport padrão de teste —
-      // usa um viewport de celular pra não precisar rolar até os elementos.
       await tester.binding.setSurfaceSize(const Size(400, 1600));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      // 1ª "abertura" do app: sem sessão salva, cai no login.
       await tester.pumpWidget(buildRealApp());
-      // `pumpAndSettle` sozinho não é suficiente aqui: ele para de pumpar
-      // assim que não há mais nenhum frame agendado, e a splash — sem
-      // nenhuma animação contínua — não agenda frame nenhum enquanto só
-      // espera a `duracaoMinimaSplash` (ver `SessionController`). Sem
-      // avançar o relógio explicitamente por esse tanto, o teste segue pra
-      // frente com a sessão ainda em "checking".
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
       expect(find.text('Bem-vindo'), findsOneWidget);
 
-      // Vai pra criar conta, preenche e envia.
       await tester.tap(find.text('Criar conta'));
       await tester.pumpAndSettle();
 
@@ -134,11 +121,8 @@ void main() {
       await tester.tap(find.text('Criar conta').last);
       await tester.pumpAndSettle();
 
-      // Cadastro + login (automático) com sucesso -> vai direto pro histórico.
       expect(find.text('Minhas análises'), findsOneWidget);
 
-      // 2ª "abertura" do app (mesmo storage, novo container/widget tree) —
-      // a sessão salva deve pular o login e ir direto pro histórico.
       await tester.pumpWidget(Container());
       await tester.pumpWidget(buildRealApp());
       await tester.pump(const Duration(milliseconds: 1100));

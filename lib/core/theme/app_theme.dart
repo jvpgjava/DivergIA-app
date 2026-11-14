@@ -4,10 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_color_tokens.dart';
 import 'app_colors.dart';
 
-/// Tema base do app, construído a partir dos tokens extraídos do Figma
-/// (ver [AppColors]/[AppColorTokens] e [AppTypography]) — nenhuma tela deve
-/// declarar cor ou fonte "solta", sempre via `context.colors`/
-/// `AppTypography.xxx(context)`.
 abstract final class AppTheme {
   static ThemeData get light => _build(AppColorTokens.light, Brightness.light);
 

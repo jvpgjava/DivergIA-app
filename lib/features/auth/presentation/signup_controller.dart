@@ -21,8 +21,6 @@ class SignupController extends StateNotifier<SignupState> {
   final AuthApi _authApi;
   final SessionController _sessionController;
 
-  /// Cadastra e, em seguida, já autentica com as mesmas credenciais — o
-  /// endpoint de cadastro não devolve token, só o de login devolve.
   Future<bool> submit({
     required String nome,
     required String email,

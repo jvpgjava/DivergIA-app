@@ -126,6 +126,80 @@ void main() {
     },
   );
 
+  testWidgets('deveRecusarBinarioLocalmenteSemChamarOServidor', (tester) async {
+    await tester.pumpWidget(buildApp());
+
+    final campos = find.byType(TextField);
+    await tester.enterText(campos.at(0), 'texto original');
+    await tester.enterText(
+      campos.at(1),
+      '01101111 01101100 01100001 00100000 01101101 01110101 01101110 01100100',
+    );
+    await tester.tap(find.text('Analisar textos'));
+    await tester.pump();
+
+    expect(find.textContaining('conteúdo codificado'), findsOneWidget);
+    verifyNever(
+      () => api.analisar(
+        textoOriginal: any(named: 'textoOriginal'),
+        arquivoOriginal: any(named: 'arquivoOriginal'),
+        textoEditado: any(named: 'textoEditado'),
+        arquivoEditado: any(named: 'arquivoEditado'),
+        manterHistorico: any(named: 'manterHistorico'),
+      ),
+    );
+  });
+
+  testWidgets('deveAvisarQuandoOsDoisTextosSaoIguais', (tester) async {
+    await tester.pumpWidget(buildApp());
+
+    final campos = find.byType(TextField);
+    await tester.enterText(campos.at(0), 'Sou contra essa proposta.');
+    await tester.enterText(campos.at(1), '  Sou contra essa proposta. ');
+    await tester.tap(find.text('Analisar textos'));
+    await tester.pump();
+
+    expect(find.textContaining('igual ao original'), findsOneWidget);
+  });
+
+  testWidgets('deveMostrarRecusaDoServidorEmbaixoDoCampoCerto', (tester) async {
+    when(
+      () => api.analisar(
+        textoOriginal: 'texto original',
+        arquivoOriginal: null,
+        textoEditado: 'texto editado',
+        arquivoEditado: null,
+        manterHistorico: true,
+      ),
+    ).thenThrow(
+      const ValidationException(
+        'O texto editado não parece ser uma versão do original.',
+        codigo: 'SEM_RELACAO',
+        campo: 'EDITADO',
+      ),
+    );
+
+    await tester.pumpWidget(buildApp());
+    final campos = find.byType(TextField);
+    await tester.enterText(campos.at(0), 'texto original');
+    await tester.enterText(campos.at(1), 'texto editado');
+    await tester.tap(find.text('Analisar textos'));
+    await tester.pump();
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('O texto editado não parece ser uma versão do original.'),
+      findsOneWidget,
+    );
+
+    await tester.enterText(campos.at(1), 'texto editado de novo');
+    await tester.pump();
+    expect(
+      find.text('O texto editado não parece ser uma versão do original.'),
+      findsNothing,
+    );
+  });
+
   testWidgets('deveMostrarMensagemDeErroQuandoAAnaliseFalha', (tester) async {
     when(
       () => api.analisar(

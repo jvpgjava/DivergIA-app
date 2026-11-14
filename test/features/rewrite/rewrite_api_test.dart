@@ -19,6 +19,7 @@ void main() {
     when(
       () => client.post<Map<String, dynamic>>(
         '/api/analises/trechos/trecho-1/sugestao-reescrita',
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).thenAnswer(
       (_) async => Response(
@@ -38,6 +39,7 @@ void main() {
     verify(
       () => client.post<Map<String, dynamic>>(
         '/api/analises/trechos/trecho-1/sugestao-reescrita',
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).called(1);
   });

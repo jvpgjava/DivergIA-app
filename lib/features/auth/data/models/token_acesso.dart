@@ -1,4 +1,3 @@
-/// Espelha `LoginResponse` do backend (`POST /api/auth/login`).
 class TokenAcesso {
   const TokenAcesso({required this.accessToken, required this.expiraEm});
 

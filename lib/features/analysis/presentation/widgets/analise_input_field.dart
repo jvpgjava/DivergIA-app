@@ -8,16 +8,6 @@ import '../../data/models/arquivo_selecionado.dart';
 
 const _limiteCaracteres = 10000;
 
-/// Campo "Texto original"/"Texto editado" — Figma: "Original-Block"/
-/// "Edited-Block". Aceita texto colado OU um arquivo (nunca os dois);
-/// quando um arquivo é escolhido, a caixa de texto vira um card com o
-/// nome do arquivo (não tem referência no Figma pra esse estado — segue a
-/// mesma linguagem visual das outras caixas).
-///
-/// Rótulo e contador ficam FORA da caixa, e "Anexar arquivo" também — a
-/// caixa em si só existe pra digitar o texto (ou mostrar o arquivo
-/// escolhido); antes havia um ícone de clipe flutuando por cima do texto
-/// digitado, o que criava a impressão de "duas caixas" na mesma área.
 class AnaliseInputField extends StatefulWidget {
   const AnaliseInputField({
     super.key,
@@ -102,7 +92,11 @@ class _AnaliseInputFieldState extends State<AnaliseInputField> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.x, size: 12, color: AppColors.danger),
+                    const Icon(
+                      LucideIcons.x,
+                      size: 12,
+                      color: AppColors.danger,
+                    ),
                     const SizedBox(width: 2),
                     Text(
                       'Remover arquivo',
@@ -169,10 +163,7 @@ class _AnaliseInputFieldState extends State<AnaliseInputField> {
               onTap: widget.onAnexar,
               borderRadius: BorderRadius.circular(8),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

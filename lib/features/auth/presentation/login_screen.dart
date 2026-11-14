@@ -9,7 +9,6 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'login_controller.dart';
 
-/// Tela de login — fidelidade ao frame "login" do Figma.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -194,9 +193,7 @@ class _SocialButton extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: AppTypography.bodyEmphasis(
-                context,
-              ).copyWith(fontSize: 14),
+              style: AppTypography.bodyEmphasis(context).copyWith(fontSize: 14),
             ),
           ],
         ),

@@ -14,8 +14,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Nunca toca o `flutter_secure_storage` real (que exigiria mockar o
-/// platform channel) — o status de sessão é setado direto pelo teste.
 class _FakeSessionController extends SessionController {
   _FakeSessionController(SessionStatus initialStatus)
     : super(SecureTokenStorage()) {
@@ -56,11 +54,6 @@ void main() {
     router = buildAppRouter(fakeSession);
     return ProviderScope(
       overrides: [
-        // Sem isso, qualquer provider que dependa de `sessionControllerProvider`
-        // (como o `ProfileController`, pra fazer logout) criaria uma segunda
-        // instância REAL de `SessionController`, que tentaria acessar o
-        // `flutter_secure_storage` de verdade — sem handler de plataforma
-        // configurado neste teste, trava o `pumpAndSettle` pra sempre.
         sessionControllerProvider.overrideWith((ref) => fakeSession),
         historicoApiProvider.overrideWithValue(historicoApi),
         authApiProvider.overrideWithValue(authApi),

@@ -3,13 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'app_color_tokens.dart';
 
-/// Escala tipográfica extraída do protótipo Figma: títulos em Sora
-/// (ExtraBold/SemiBold), corpo/rótulos em Inter (Regular/Medium/SemiBold).
-///
-/// A maioria dos estilos recebe `context` porque a cor (texto
-/// primário/secundário) muda entre claro e escuro — só [scoreBadge] e
-/// [buttonText] não mudam (cor sempre definida por quem usa, ou fixa em
-/// branco sobre botão colorido).
 abstract final class AppTypography {
   static TextStyle displayLarge(BuildContext context) => GoogleFonts.sora(
     fontSize: 28,
@@ -35,14 +28,12 @@ abstract final class AppTypography {
     color: context.colors.textLabel,
   );
 
-  /// Título de card (ex: "History-Card" do histórico) — Sora Bold 15.
   static TextStyle cardTitle(BuildContext context) => GoogleFonts.sora(
     fontSize: 15,
     fontWeight: FontWeight.w700,
     color: context.colors.textPrimary,
   );
 
-  /// Texto do Score-Badge — Sora Bold 12, cor definida por quem usa.
   static TextStyle get scoreBadge =>
       GoogleFonts.sora(fontSize: 12, fontWeight: FontWeight.w700);
 

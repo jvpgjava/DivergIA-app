@@ -63,4 +63,72 @@ void main() {
     expect(controller.state.loading, isFalse);
     expect(controller.state.errorMessage, isNotNull);
   });
+
+  test('recusaDoServidorComCampoDeveIrParaOCampoCerto', () async {
+    when(
+      () => api.analisar(
+        textoOriginal: 'original',
+        arquivoOriginal: null,
+        textoEditado: 'editado',
+        arquivoEditado: null,
+        manterHistorico: true,
+      ),
+    ).thenThrow(
+      const ValidationException(
+        'O texto editado tem conteúdo codificado.',
+        codigo: 'CONTEUDO_CODIFICADO',
+        campo: 'EDITADO',
+      ),
+    );
+
+    await controller.analisar(textoOriginal: 'original', textoEditado: 'editado');
+
+    expect(controller.state.erroEditado, 'O texto editado tem conteúdo codificado.');
+    expect(controller.state.erroOriginal, isNull);
+    expect(controller.state.errorMessage, isNull);
+  });
+
+  test('recusaQueValeParaOsDoisTextosDeveIrParaOErroGeral', () async {
+    when(
+      () => api.analisar(
+        textoOriginal: 'original',
+        arquivoOriginal: null,
+        textoEditado: 'editado',
+        arquivoEditado: null,
+        manterHistorico: true,
+      ),
+    ).thenThrow(
+      const ValidationException(
+        'Os textos estão em idiomas diferentes.',
+        codigo: 'IDIOMAS_DIFERENTES',
+        campo: 'AMBOS',
+      ),
+    );
+
+    await controller.analisar(textoOriginal: 'original', textoEditado: 'editado');
+
+    expect(controller.state.errorMessage, 'Os textos estão em idiomas diferentes.');
+    expect(controller.state.erroOriginal, isNull);
+    expect(controller.state.erroEditado, isNull);
+  });
+
+  test('limparErrosDeveApagarARecusaAnterior', () async {
+    when(
+      () => api.analisar(
+        textoOriginal: 'original',
+        arquivoOriginal: null,
+        textoEditado: 'editado',
+        arquivoEditado: null,
+        manterHistorico: true,
+      ),
+    ).thenThrow(
+      const ValidationException('Recusado.', campo: 'ORIGINAL'),
+    );
+    await controller.analisar(textoOriginal: 'original', textoEditado: 'editado');
+    expect(controller.state.erroOriginal, isNotNull);
+
+    controller.limparErros();
+
+    expect(controller.state.erroOriginal, isNull);
+  });
 }

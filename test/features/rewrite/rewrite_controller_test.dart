@@ -41,6 +41,17 @@ void main() {
     expect(controller.state.errorMessage, isNotNull);
   });
 
+  test('listaVaziaDeSugestoesViraMensagemENaoDeixaAceitar', () async {
+    when(() => api.sugerir('trecho-1')).thenAnswer((_) async => <String>[]);
+
+    final controller = RewriteController(api, 'trecho-1');
+    await Future<void>.delayed(Duration.zero);
+
+    expect(controller.state.loading, isFalse);
+    expect(controller.state.errorMessage, semSugestaoFiel);
+    expect(await controller.aceitar(), isFalse);
+  });
+
   test('carregarNovamenteDeveRefazerAChamada', () async {
     when(() => api.sugerir('trecho-1')).thenThrow(const NetworkException());
     final controller = RewriteController(api, 'trecho-1');

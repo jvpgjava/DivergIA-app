@@ -8,10 +8,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 
-/// Tela de recorte da foto de perfil — aberta logo depois de escolher a
-/// imagem, antes de enviar pro servidor. Sem referência no Figma (o
-/// protótipo não cobre esse fluxo); usa um recorte circular fixo (1:1),
-/// já que é exatamente assim que o avatar aparece no app.
 class PhotoCropScreen extends StatefulWidget {
   const PhotoCropScreen({super.key, required this.bytes});
 

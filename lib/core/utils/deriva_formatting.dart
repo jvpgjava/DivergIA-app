@@ -18,9 +18,6 @@ const _meses = [
   'dezembro',
 ];
 
-/// "Hoje, às 14:32" / "Ontem, às 18:10" / "12 de Agosto, 2026" — mesmo
-/// padrão do card de histórico no Figma. Usado em qualquer tela que
-/// precise mostrar a data de uma análise (histórico, detalhe, tendência).
 String formatarDataRelativa(DateTime dataUtc) {
   final data = dataUtc.toLocal();
   final agora = DateTime.now();
@@ -39,9 +36,6 @@ String formatarDataRelativa(DateTime dataUtc) {
   return '${data.day} de $mesCapitalizado, ${data.year}';
 }
 
-/// Rótulo legível pro `tipoDesvio` principal de uma análise ("SENTIDO",
-/// "POSICAO", "INTENSIDADE" — vem do backend). `null` quando a análise não
-/// tem trechos de deriva (ou não teve o texto retido).
 String rotuloTipoDesvio(String? tipoDesvio) {
   switch (tipoDesvio) {
     case 'SENTIDO':
@@ -55,8 +49,6 @@ String rotuloTipoDesvio(String? tipoDesvio) {
   }
 }
 
-/// Nível de severidade de uma pontuação de intensidade (0-100) — mesmos
-/// limiares usados em toda cor/rótulo derivado da pontuação no Figma.
 enum NivelSeveridade { alta, media, baixa }
 
 NivelSeveridade nivelDeSeveridade(int pontuacao) {
@@ -65,9 +57,6 @@ NivelSeveridade nivelDeSeveridade(int pontuacao) {
   return NivelSeveridade.baixa;
 }
 
-/// Cores do Score-Badge do Figma — variam com a severidade (0-100) e com o
-/// tema (o fundo pastel do claro vira o próprio tom em baixa opacidade no
-/// escuro, por isso precisa do `context`).
 ({Color bg, Color fg}) corDaPontuacao(BuildContext context, int pontuacao) {
   final colors = context.colors;
   switch (nivelDeSeveridade(pontuacao)) {
@@ -80,10 +69,6 @@ NivelSeveridade nivelDeSeveridade(int pontuacao) {
   }
 }
 
-/// Trecho de maior intensidade de uma análise — mesma regra que o backend
-/// usa pra calcular `pontuacaoIntensidade`/`tipoDesvioPrincipal` no
-/// histórico, aplicada aqui sobre os trechos já carregados no app (sem
-/// precisar de outra chamada). `null` quando não há trechos.
 ({int pontuacao, String tipoDesvio})? trechoPrincipal(
   Iterable<({String tipoDesvio, double intensidade})> trechos,
 ) {
@@ -97,9 +82,6 @@ NivelSeveridade nivelDeSeveridade(int pontuacao) {
   );
 }
 
-/// Título do Score-Card (Figma: "analysis-results") — categoria da
-/// divergência principal + intensidade, com concordância de gênero
-/// ("Desvio de Sentido Elevado" vs. "Mudança de Posição Elevada").
 String tituloBriefing(String tipoDesvio, int pontuacao) {
   final feminino = tipoDesvio == 'POSICAO' || tipoDesvio == 'INTENSIDADE';
   final severidade = switch (nivelDeSeveridade(pontuacao)) {
@@ -110,14 +92,12 @@ String tituloBriefing(String tipoDesvio, int pontuacao) {
   return '${rotuloTipoDesvio(tipoDesvio)} $severidade';
 }
 
-/// Descrição curta do Score-Card, categórica por tipo de desvio — o
-/// backend não fornece um resumo textual específico por análise.
 String descricaoBriefing(String tipoDesvio) {
   switch (tipoDesvio) {
     case 'SENTIDO':
       return 'A IA modificou conceitos essenciais do texto original.';
     case 'POSICAO':
-      return 'A IA alterou a ordem ou a ênfase das informações originais.';
+      return 'A IA inverteu ou suavizou a opinião expressa no texto original.';
     case 'INTENSIDADE':
       return 'A IA suavizou ou intensificou o tom do texto original.';
     default:
@@ -125,8 +105,6 @@ String descricaoBriefing(String tipoDesvio) {
   }
 }
 
-/// Subtítulo do cabeçalho de resultado (Figma: "Detectamos 1 divergência
-/// crítica"), com concordância de número e a severidade da pior divergência.
 String subtituloResultado(int quantidadeTrechos, int? pontuacaoMaxima) {
   if (quantidadeTrechos == 0 || pontuacaoMaxima == null) {
     return 'Nenhuma divergência de sentido foi encontrada.';

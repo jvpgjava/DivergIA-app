@@ -9,11 +9,6 @@ import '../../../core/widgets/screen_back_header.dart';
 import '../../analysis/data/models/trecho_deriva.dart';
 import 'rewrite_controller.dart';
 
-/// Tela "Sugestão de reescrita" — fidelidade ao frame "rewrite-suggestion"
-/// do Figma, com 3 alternativas selecionáveis (o backend agora gera 3 em
-/// vez de 1). "Descartar" pergunta se o usuário quer gerar mais 3 opções;
-/// "Aceitar sugestão" persiste a escolhida via `PUT .../sugestao-reescrita`
-/// e fecha a tela devolvendo `true`, pra a tela de resultado recarregar.
 class RewriteSuggestionScreen extends ConsumerWidget {
   const RewriteSuggestionScreen({super.key, required this.trecho});
 
@@ -205,9 +200,6 @@ class _SugestaoOption extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      // `Border` não suporta `borderRadius` com cores não uniformes por
-      // lado — por isso o acento azul à esquerda (só quando selecionada) é
-      // uma faixa separada dentro de um `Row`, em vez de um `Border.left`.
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: IntrinsicHeight(

@@ -2,13 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/network/api_config.dart';
 import 'models/arquivo_selecionado.dart';
 import 'models/resultado_analise.dart';
 
-/// Chamadas HTTP de análise — espelha `AnaliseController` do backend
-/// (`POST /api/analises`, multipart). Cada lado (original/editado) é
-/// texto colado OU arquivo, nunca os dois — a mesma regra do
-/// `EntradaTexto` do backend.
 class AnaliseApi {
   AnaliseApi(this._client);
 
@@ -40,6 +37,7 @@ class AnaliseApi {
     final response = await _client.post<Map<String, dynamic>>(
       '/api/analises',
       data: formData,
+      receiveTimeout: ApiConfig.iaTimeout,
     );
     return ResultadoAnalise.fromJson(response.data!);
   }

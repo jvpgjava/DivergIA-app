@@ -6,8 +6,6 @@ import '../data/models/analise_resumo.dart';
 
 const _tamanhoPagina = 10;
 
-/// `null` = sem ordenação especial (mais recente primeiro, ordem do
-/// backend); as demais reordenam a lista já carregada no app.
 enum OrdenacaoHistorico { recentes, maiorIntensidade, menorIntensidade }
 
 class HistoricoState {
@@ -26,8 +24,6 @@ class HistoricoState {
   final List<AnaliseResumo> itens;
   final String busca;
 
-  /// `null` = "Todos"; caso contrário, um dos valores de `tipoDesvioPrincipal`
-  /// vindos do backend ("SENTIDO", "POSICAO", "INTENSIDADE").
   final String? filtroTipo;
   final OrdenacaoHistorico ordenacao;
   final int quantidadeVisivel;

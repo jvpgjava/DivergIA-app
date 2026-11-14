@@ -4,8 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_color_tokens.dart';
 import '../theme/app_typography.dart';
 
-/// Campo de texto com rótulo acima e caixa abaixo (Figma: "Input-Box"),
-/// usado em login/cadastro/recuperação de senha.
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,

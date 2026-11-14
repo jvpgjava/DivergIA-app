@@ -15,10 +15,6 @@ import '../data/models/trecho_deriva.dart';
 import 'widgets/score_card.dart';
 import 'widgets/trecho_result_card.dart';
 
-/// Tela "Resultado da análise" — fidelidade ao frame "analysis-results" do
-/// Figma. Usada tanto pelo histórico (`/historico/:id`) quanto logo após
-/// uma nova análise ser criada, já que o backend sempre persiste a análise
-/// com um id real independente de `manterHistorico`.
 class AnalysisResultScreen extends ConsumerStatefulWidget {
   const AnalysisResultScreen({super.key, required this.analiseId});
 
@@ -39,9 +35,7 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
   }
 
   void _carregar() {
-    // `Future(...)` garante que até uma falha síncrona na chamada vire um
-    // erro da Future (e caia no `FutureBuilder`), em vez de derrubar o
-    // build do widget.
+    // Future(...) transforma falha síncrona em erro da Future, tratado pelo FutureBuilder.
     _futuro = Future(
       () => ref.read(historicoApiProvider).buscar(widget.analiseId),
     );
@@ -52,7 +46,6 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
       '/historico/${widget.analiseId}/trechos/${trecho.id}/reescrita',
       extra: trecho,
     );
-    // Recarrega pra trazer o `sugestaoAceita` recém-persistido no trecho.
     if (aceitou == true) setState(_carregar);
   }
 
@@ -138,7 +131,8 @@ class _AnalysisResultScreenState extends ConsumerState<AnalysisResultScreen> {
                       trecho: trecho,
                       textoOriginalCompleto: resultado.textoOriginal,
                       textoEditadoCompleto: resultado.textoEditado,
-                      onSugerirReescrita: () => _abrirSugestaoDeReescrita(trecho),
+                      onSugerirReescrita: () =>
+                          _abrirSugestaoDeReescrita(trecho),
                     ),
                   ),
                 ],

@@ -3,9 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/theme_preferences_storage.dart';
 
-/// Preferência de "modo escuro" do Figma é um único switch (sem opção de
-/// "seguir o sistema"), então o estado é sempre [ThemeMode.light] ou
-/// [ThemeMode.dark] — nunca [ThemeMode.system].
 class ThemeModeController extends StateNotifier<ThemeMode> {
   ThemeModeController(this._storage) : super(ThemeMode.light) {
     _carregar();

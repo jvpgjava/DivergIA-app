@@ -14,11 +14,6 @@ class ProfileState {
   final Usuario? usuario;
 }
 
-/// Carrega os dados da conta (`GET /api/auth/me`) assim que criado, e expõe
-/// as ações da tela de Perfil que de fato têm um endpoint real por trás:
-/// alterar senha/e-mail/foto, excluir histórico, excluir conta e logout
-/// (este último já revoga o token no servidor — ver [AuthApi.logout] — não é
-/// só limpar o storage local).
 class ProfileController extends StateNotifier<ProfileState> {
   ProfileController(this._authApi, this._historicoApi, this._sessionController)
     : super(const ProfileState(loading: true)) {
@@ -52,9 +47,6 @@ class ProfileController extends StateNotifier<ProfileState> {
     try {
       await _authApi.logout();
     } on ApiException {
-      // Mesmo se a chamada falhar (ex: sem rede), ainda limpa a sessão
-      // local — não faz sentido prender a pessoa numa tela autenticada só
-      // porque o logout no servidor não confirmou.
     }
     await _sessionController.onLogout();
   }

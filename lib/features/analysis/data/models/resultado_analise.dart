@@ -1,6 +1,5 @@
 import 'trecho_deriva.dart';
 
-/// Espelha `ResultadoAnaliseResponse` do backend (`GET /api/historico/{id}`).
 class ResultadoAnalise {
   const ResultadoAnalise({
     required this.analiseId,
@@ -25,10 +24,6 @@ class ResultadoAnalise {
   final DateTime criadoEm;
   final List<TrechoDeriva> trechos;
 
-  /// Texto bruto completo digitado/anexado pelo usuário — `null` quando a
-  /// análise não reteve o texto (usuário não consentiu em manter histórico).
-  /// Usado pra destacar o trecho de deriva dentro do contexto completo,
-  /// como no Figma, em vez de mostrar só o trecho isolado.
   final String? textoOriginal;
   final String? textoEditado;
 }

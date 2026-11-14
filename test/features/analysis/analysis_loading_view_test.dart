@@ -20,7 +20,6 @@ void main() {
     );
     expect(find.text('Gerando relatório de divergências'), findsOneWidget);
 
-    // não deixa timer pendente ao final do teste
     await tester.pump(const Duration(seconds: 10));
   });
 

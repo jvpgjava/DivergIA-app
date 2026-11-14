@@ -34,13 +34,6 @@ void main() {
     );
   });
 
-  /// A tela de cadastro é mais alta que o viewport padrão de teste
-  /// (800x600) e mais estreita que o normal de um app real (as duas
-  /// diferenças aparecem na tela real também: use um viewport de celular
-  /// pra não precisar rolar até os elementos antes de tocar neles). Começa
-  /// em `/login` e empurra pra `/signup` só depois do primeiro pump — o
-  /// `GoRouter` precisa estar anexado a um `Navigator` antes de aceitar um
-  /// `push` de verdade (senão vira location inicial, sem stack pra `pop`).
   Future<void> pumpSignupScreen(WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 1600));
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -49,9 +42,6 @@ void main() {
       ProviderScope(
         overrides: [
           authApiProvider.overrideWithValue(authApi),
-          // Sem isso, o Timer da espera mínima de splash (ver
-          // `SessionController.duracaoMinimaSplash`) fica pendente no fim
-          // do teste — nenhum destes testes envolve a splash de verdade.
           sessionControllerProvider.overrideWith(
             (ref) => SessionController(
               ref.watch(secureTokenStorageProvider),

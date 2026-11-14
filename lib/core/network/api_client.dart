@@ -8,9 +8,6 @@ import 'api_exception.dart';
 import 'auth_interceptor.dart';
 import 'error_interceptor.dart';
 
-/// Cliente HTTP único do app. Nenhuma outra classe deve instanciar `Dio`
-/// diretamente — sempre através de [ApiClient], para garantir que
-/// autenticação e tratamento de erro central sejam sempre aplicados.
 class ApiClient {
   ApiClient({Dio? dio, SecureTokenStorage? tokenStorage})
     : _dio =
@@ -42,8 +39,19 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
   }) => _run(() => _dio.get<T>(path, queryParameters: queryParameters));
 
-  Future<Response<T>> post<T>(String path, {Object? data}) =>
-      _run(() => _dio.post<T>(path, data: data));
+  Future<Response<T>> post<T>(
+    String path, {
+    Object? data,
+    Duration? receiveTimeout,
+  }) => _run(
+    () => _dio.post<T>(
+      path,
+      data: data,
+      options: receiveTimeout == null
+          ? null
+          : Options(receiveTimeout: receiveTimeout, sendTimeout: receiveTimeout),
+    ),
+  );
 
   Future<Response<T>> put<T>(String path, {Object? data}) =>
       _run(() => _dio.put<T>(path, data: data));

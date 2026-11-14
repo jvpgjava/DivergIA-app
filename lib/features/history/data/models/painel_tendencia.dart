@@ -1,7 +1,5 @@
 import 'ponto_tendencia.dart';
 
-/// Espelha `PainelTendenciaResponse` do backend
-/// (`GET /api/historico/tendencia`).
 class PainelTendencia {
   const PainelTendencia({
     required this.totalAnalises,
@@ -28,7 +26,6 @@ class PainelTendencia {
   final int totalDerivas;
   final double intensidadeMedia;
 
-  /// Chave é o nome do `TipoDesvio` ("SENTIDO", "POSICAO", "INTENSIDADE").
   final Map<String, int> derivasPorTipo;
   final List<PontoTendencia> evolucaoMensal;
 }

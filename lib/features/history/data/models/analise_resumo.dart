@@ -1,7 +1,3 @@
-/// Espelha `AnaliseResumoResponse` do backend (`GET /api/historico`).
-/// `pontuacaoIntensidade`, `tipoDesvioPrincipal` e `textoPreview` vêm nulos
-/// quando a análise não tem trechos de deriva ou não teve o texto retido
-/// (usuário sem consentimento de histórico).
 class AnaliseResumo {
   const AnaliseResumo({
     required this.id,

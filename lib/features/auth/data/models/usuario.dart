@@ -1,4 +1,3 @@
-/// Espelha `UsuarioResponse` do backend (`GET/POST /api/auth/*`).
 class Usuario {
   const Usuario({
     required this.id,

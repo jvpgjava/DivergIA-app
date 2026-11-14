@@ -18,16 +18,6 @@ import 'profile_controller.dart';
 
 const _extensoesImagemAceitas = ['jpg', 'jpeg', 'png', 'webp'];
 
-/// Tela "Meu perfil" — fidelidade ao frame "profile-settings" do Figma.
-///
-/// O Figma mostra "Período de retenção de dados" com um valor fixo de "30
-/// dias" — removido por decisão explícita: histórico e contribuição para o
-/// RAG são sempre ativos agora, sem opção de opt-out por usuário.
-///
-/// "Excluir conta" também não aparece nesse frame do Figma, mas o roadmap
-/// exige essa ação e o backend já tem o endpoint — foi adicionada como uma
-/// segunda ação destrutiva ao lado de "Excluir histórico", seguindo a
-/// mesma linguagem visual (texto vermelho + ícone de alerta).
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -135,8 +125,6 @@ class ProfileScreen extends ConsumerWidget {
     final bytes = await arquivo.readAsBytes();
     if (!context.mounted) return;
 
-    // O recorte sempre devolve PNG (o pacote não expõe outro formato de
-    // saída), independente da extensão do arquivo original escolhido.
     final bytesRecortados = await context.push<Uint8List>(
       '/perfil/cortar-foto',
       extra: bytes,
@@ -787,4 +775,3 @@ class _DangerRow extends StatelessWidget {
     );
   }
 }
-

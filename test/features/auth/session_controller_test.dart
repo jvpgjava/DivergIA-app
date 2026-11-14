@@ -54,9 +54,6 @@ void main() {
     storage = SecureTokenStorage();
   });
 
-  // Sem a espera mínima de splash aqui — ela é puramente de UX (ver
-  // `_duracaoMinimaSplash` em [SessionController]), e deixá-la no valor
-  // padrão faria cada teste esperar de verdade ~1s à toa.
   SessionController criarController() =>
       SessionController(storage, duracaoMinimaSplash: Duration.zero);
 

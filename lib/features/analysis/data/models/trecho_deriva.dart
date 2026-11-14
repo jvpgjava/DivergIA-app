@@ -1,4 +1,3 @@
-/// Espelha `TrechoDerivaResponse` do backend.
 class TrechoDeriva {
   const TrechoDeriva({
     required this.id,

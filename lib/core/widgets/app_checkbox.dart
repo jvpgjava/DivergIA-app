@@ -4,8 +4,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../theme/app_color_tokens.dart';
 import '../theme/app_colors.dart';
 
-/// Checkbox no estilo do Figma ("Checkbox" da tela signup): marcado vira um
-/// quadrado arredondado com borda e fundo azul-claro + ícone de check.
 class AppCheckbox extends StatelessWidget {
   const AppCheckbox({super.key, required this.value, required this.onChanged});
 

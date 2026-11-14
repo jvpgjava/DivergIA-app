@@ -4,8 +4,6 @@ import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
 
-/// "Score-Card" do Figma ("analysis-results"): medidor circular com a
-/// pontuação de intensidade + título/descrição da divergência principal.
 class ScoreCard extends StatelessWidget {
   const ScoreCard({
     super.key,

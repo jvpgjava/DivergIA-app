@@ -3,9 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../widgets/app_bottom_nav.dart';
 
-/// Casca com a bottom nav (Figma: "Bottom-Nav"), compartilhada pelas telas
-/// de Histórico e Perfil. O botão central sempre empurra "Nova análise" —
-/// não é uma aba, é uma ação.
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.tab, required this.child});
 

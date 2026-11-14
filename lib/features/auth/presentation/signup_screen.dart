@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/app_back_button.dart';
 import '../../../core/widgets/app_checkbox.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/primary_button.dart';
 import 'signup_controller.dart';
 
-/// Tela de cadastro — fidelidade ao frame "signup" do Figma.
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
@@ -68,19 +66,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               children: [
                 Row(
                   children: [
-                    InkWell(
-                      onTap: () => context.pop(),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: context.colors.surfaceInput,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(LucideIcons.chevronLeft, size: 16),
-                      ),
-                    ),
+                    const AppBackButton(),
                     const SizedBox(width: 12),
                     Text(
                       'Criar nova conta',

@@ -12,8 +12,6 @@ class TendenciaState {
   final PainelTendencia? painel;
 }
 
-/// Busca o painel de tendência assim que criado — a tela não tem outro
-/// gatilho, ela já abre carregando.
 class TendenciaController extends StateNotifier<TendenciaState> {
   TendenciaController(this._api) : super(const TendenciaState()) {
     carregar();

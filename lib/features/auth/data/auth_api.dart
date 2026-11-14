@@ -5,9 +5,6 @@ import '../../../core/network/api_client.dart';
 import 'models/token_acesso.dart';
 import 'models/usuario.dart';
 
-/// Chamadas HTTP de autenticação — espelha exatamente o `AuthController` do
-/// backend (`/api/auth/*`). Nenhuma tela deve montar essas rotas por conta
-/// própria.
 class AuthApi {
   AuthApi(this._client);
 

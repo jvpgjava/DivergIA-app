@@ -14,7 +14,6 @@ import 'widgets/history_card.dart';
 
 const _tiposDesvio = ['SENTIDO', 'POSICAO', 'INTENSIDADE'];
 
-/// Tela "Minhas análises" — fidelidade ao frame "home-history" do Figma.
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
 

@@ -82,9 +82,6 @@ void main() {
     return ProviderScope(
       overrides: [
         authApiProvider.overrideWithValue(authApi),
-        // Sem isso, o Timer da espera mínima de splash (ver
-        // `SessionController.duracaoMinimaSplash`) fica pendente no fim do
-        // teste — nenhum destes testes envolve a splash de verdade.
         sessionControllerProvider.overrideWith(
           (ref) => SessionController(
             ref.watch(secureTokenStorageProvider),

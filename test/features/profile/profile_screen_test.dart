@@ -95,9 +95,6 @@ void main() {
     );
   }
 
-  /// A tela de Perfil tem vários cards e não cabe no viewport padrão de
-  /// teste (800x600) — usa um viewport bem alto pra tudo (inclusive "Sair
-  /// da conta", o último item) ficar montado sem precisar rolar.
   Future<void> pumpProfileScreen(WidgetTester tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 1400));
     addTearDown(() => tester.binding.setSurfaceSize(null));

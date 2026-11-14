@@ -24,6 +24,7 @@ void main() {
       () => client.post<Map<String, dynamic>>(
         '/api/analises',
         data: any(named: 'data'),
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).thenAnswer(
       (_) async => Response(
@@ -48,6 +49,7 @@ void main() {
       () => client.post<Map<String, dynamic>>(
         '/api/analises',
         data: any(named: 'data'),
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).called(1);
   });
@@ -58,6 +60,7 @@ void main() {
       () => client.post<Map<String, dynamic>>(
         '/api/analises',
         data: any(named: 'data'),
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).thenAnswer((invocation) async {
       formDataEnviado = invocation.namedArguments[#data] as FormData;
@@ -90,6 +93,7 @@ void main() {
       () => client.post<Map<String, dynamic>>(
         '/api/analises',
         data: any(named: 'data'),
+        receiveTimeout: any(named: 'receiveTimeout'),
       ),
     ).thenAnswer((invocation) async {
       formDataEnviado = invocation.namedArguments[#data] as FormData;

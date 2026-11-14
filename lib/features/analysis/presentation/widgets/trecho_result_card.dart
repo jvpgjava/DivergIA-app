@@ -7,14 +7,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
 import '../../data/models/trecho_deriva.dart';
 
-/// "Comparison-Stack" + "Explanation-Banner" do Figma ("analysis-results"),
-/// repetidos uma vez por trecho de deriva de uma análise.
-///
-/// O Figma sublinha só a frase específica que mudou dentro do texto
-/// completo. Quando o backend devolve o texto bruto (`textoOriginalCompleto`/
-/// `textoEditadoCompleto` — nulos se o usuário não reteve histórico), é
-/// exatamente isso que aparece aqui, com o trecho de deriva destacado; sem o
-/// texto completo, cai de volta a mostrar só o trecho isolado.
 class TrechoResultCard extends StatelessWidget {
   const TrechoResultCard({
     super.key,
@@ -133,11 +125,6 @@ class _Painel extends StatelessWidget {
     );
   }
 
-  /// Divide `textoCompleto` em torno da primeira ocorrência de `trecho`,
-  /// destacando só essa ocorrência — mesmo comportamento do sublinhado no
-  /// Figma. Sem `textoCompleto` (retenção desligada) ou se o trecho não é
-  /// encontrado literalmente nele (LLM pode parafrasear ao extrair), cai de
-  /// volta a mostrar só o trecho isolado e destacado por inteiro.
   List<TextSpan> _spansDestacados({
     required String? textoCompleto,
     required String trecho,
@@ -165,9 +152,6 @@ class _Painel extends StatelessWidget {
   }
 }
 
-/// Sugestão de reescrita que o usuário já escolheu aceitar — fica visível
-/// aqui pra ele ter controle/registro do que decidiu usar, sem precisar
-/// abrir a tela de sugestão de novo.
 class _SugestaoAceitaPainel extends StatelessWidget {
   const _SugestaoAceitaPainel({required this.texto});
 
@@ -188,9 +172,11 @@ class _SugestaoAceitaPainel extends StatelessWidget {
         children: [
           Text(
             'SUGESTÃO ACEITA',
-            style: AppTypography.caption(
-              context,
-            ).copyWith(fontWeight: FontWeight.w600, letterSpacing: 0.4, color: AppColors.primary),
+            style: AppTypography.caption(context).copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+              color: AppColors.primary,
+            ),
           ),
           const SizedBox(height: 6),
           Text(

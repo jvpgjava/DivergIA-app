@@ -1,10 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Wrapper sobre [FlutterSecureStorage] para o token JWT — Keychain no iOS,
-/// Keystore/EncryptedSharedPreferences no Android. Nunca usar
-/// `shared_preferences` puro nem variável estática para o token (checklist
-/// de segurança do roadmap).
 class SecureTokenStorage {
   SecureTokenStorage({FlutterSecureStorage? storage})
     : _storage = storage ?? const FlutterSecureStorage();
@@ -16,8 +12,6 @@ class SecureTokenStorage {
 
   Future<String?> readAccessToken() => _storage.read(key: _accessTokenKey);
 
-  /// `null` se não houver sessão salva, ou se a data salva estiver corrompida
-  /// (nesse caso a sessão é tratada como inexistente).
   Future<DateTime?> readExpiraEm() async {
     final raw = await _storage.read(key: _expiraEmKey);
     if (raw == null) return null;

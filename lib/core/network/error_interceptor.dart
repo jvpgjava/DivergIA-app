@@ -2,9 +2,6 @@ import 'package:dio/dio.dart';
 
 import 'api_exception.dart';
 
-/// Traduz toda falha do Dio para uma [ApiException] tipada, num único
-/// lugar — nenhuma tela deve interpretar `DioException`/status code por
-/// conta própria.
 class ErrorInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
@@ -46,14 +43,24 @@ class ErrorInterceptor extends Interceptor {
       ),
       400 || 409 || 422 => ValidationException(
         serverMessage ?? 'Não foi possível concluir a operação.',
+        codigo: _extractString(err.response?.data, 'codigo'),
+        campo: _extractString(err.response?.data, 'campo'),
+      ),
+      // O rate limit do backend responde sem corpo; "erro inesperado" faria parecer que o app quebrou.
+      429 => ServerException(
+        serverMessage ??
+            'Muitas tentativas em pouco tempo. Aguarde um minuto e tente novamente.',
       ),
       _ => ServerException(serverMessage ?? const ServerException().message),
     };
   }
 
-  String? _extractServerMessage(dynamic data) {
-    if (data is Map && data['message'] is String) {
-      return data['message'] as String;
+  String? _extractServerMessage(dynamic data) => _extractString(data, 'message');
+
+  String? _extractString(dynamic data, String key) {
+    if (data is Map && data[key] is String) {
+      final valor = (data[key] as String).trim();
+      return valor.isEmpty ? null : valor;
     }
     return null;
   }

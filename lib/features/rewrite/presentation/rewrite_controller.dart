@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/rewrite_api.dart';
 
+const semSugestaoFiel =
+    'Não conseguimos gerar uma reescrita fiel para este trecho agora. '
+    'Tente novamente em instantes.';
+
 class RewriteState {
   const RewriteState({
     this.loading = true,
@@ -17,8 +21,6 @@ class RewriteState {
   final List<String> sugestoes;
   final int indiceSelecionado;
 
-  /// Enquanto `PUT .../sugestao-reescrita` está em voo — trava o botão
-  /// "Aceitar sugestão" pra evitar duplo toque.
   final bool aceitando;
 
   RewriteState copyWith({
@@ -36,10 +38,6 @@ class RewriteState {
   );
 }
 
-/// Busca 3 sugestões de reescrita assim que criado — a tela não tem um
-/// gatilho de usuário separado pra isso, ela já abre carregando. Também
-/// permite gerar uma nova rodada de 3 (quando o usuário descarta e pede
-/// mais opções) e aceitar a sugestão selecionada.
 class RewriteController extends StateNotifier<RewriteState> {
   RewriteController(this._api, this._trechoId) : super(const RewriteState()) {
     carregar();
@@ -52,7 +50,9 @@ class RewriteController extends StateNotifier<RewriteState> {
     state = const RewriteState(loading: true);
     try {
       final sugestoes = await _api.sugerir(_trechoId);
-      state = RewriteState(loading: false, sugestoes: sugestoes);
+      state = sugestoes.isEmpty
+          ? const RewriteState(loading: false, errorMessage: semSugestaoFiel)
+          : RewriteState(loading: false, sugestoes: sugestoes);
     } on ApiException catch (e) {
       state = RewriteState(loading: false, errorMessage: e.message);
     }
@@ -63,7 +63,10 @@ class RewriteController extends StateNotifier<RewriteState> {
   }
 
   Future<bool> aceitar() async {
-    if (state.sugestoes.isEmpty) return false;
+    if (state.sugestoes.isEmpty ||
+        state.indiceSelecionado >= state.sugestoes.length) {
+      return false;
+    }
     state = state.copyWith(aceitando: true);
     try {
       await _api.aceitar(_trechoId, state.sugestoes[state.indiceSelecionado]);

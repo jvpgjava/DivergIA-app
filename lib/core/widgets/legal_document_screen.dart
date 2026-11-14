@@ -4,7 +4,6 @@ import '../theme/app_color_tokens.dart';
 import '../theme/app_typography.dart';
 import 'screen_back_header.dart';
 
-/// Uma seção de um documento legal — um título e um ou mais parágrafos.
 class SecaoLegal {
   const SecaoLegal({required this.titulo, required this.paragrafos});
 
@@ -12,9 +11,6 @@ class SecaoLegal {
   final List<String> paragrafos;
 }
 
-/// Tela genérica pra exibir um documento legal (Termos de Serviço, Política
-/// de Privacidade) — mesma estrutura visual (cabeçalho com botão de voltar +
-/// título) das outras telas sem referência no Figma.
 class LegalDocumentScreen extends StatelessWidget {
   const LegalDocumentScreen({
     super.key,

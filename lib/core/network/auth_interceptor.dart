@@ -2,9 +2,6 @@ import 'package:dio/dio.dart';
 
 import '../storage/secure_token_storage.dart';
 
-/// Anexa o token JWT em toda chamada autenticada — nunca montado
-/// manualmente em cada tela, para evitar esquecimento (checklist de
-/// segurança do roadmap).
 class AuthInterceptor extends Interceptor {
   AuthInterceptor(this._tokenStorage);
 

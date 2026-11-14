@@ -7,10 +7,7 @@ import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 
-/// Tela de carregamento da análise — Figma: "analysis-loading". O backend
-/// não expõe progresso real (é uma chamada HTTP única), então o percentual
-/// e os passos aqui são só uma simulação visual enquanto a resposta não
-/// chega — não representam etapas reais do processamento.
+// Progresso e passos são só visuais: o backend responde numa chamada única, sem progresso real.
 class AnalysisLoadingView extends StatefulWidget {
   const AnalysisLoadingView({super.key});
 
