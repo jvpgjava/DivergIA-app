@@ -28,6 +28,10 @@ android {
     }
 
     buildTypes {
+        // Build de depuração instala ao lado do app oficial, sem substituí-lo nem apagar a sessão.
+        debug {
+            applicationIdSuffix = ".dev"
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.

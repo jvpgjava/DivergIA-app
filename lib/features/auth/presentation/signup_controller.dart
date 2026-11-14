@@ -2,7 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../data/auth_api.dart';
+import '../data/models/token_acesso.dart';
 import 'session_controller.dart';
+
+const emailIndisponivel =
+    'Não foi possível criar a conta com esse e-mail. Se você já tem conta, entre ou recupere a senha.';
 
 class SignupState {
   const SignupState({this.loading = false, this.errorMessage});
@@ -29,7 +33,13 @@ class SignupController extends StateNotifier<SignupState> {
     state = state.copyWith(loading: true, errorMessage: null);
     try {
       await _authApi.cadastrar(nome: nome, email: email, senha: senha);
-      final token = await _authApi.login(email: email, senha: senha);
+      final TokenAcesso token;
+      try {
+        token = await _authApi.login(email: email, senha: senha);
+      } on UnauthorizedException {
+        // O servidor não revela se o e-mail já tem conta: o cadastro "passa" e só o login falha.
+        throw const ValidationException(emailIndisponivel);
+      }
       await _sessionController.onLoginSuccess(
         accessToken: token.accessToken,
         expiraEm: token.expiraEm,

@@ -8,6 +8,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../../../core/widgets/screen_back_header.dart';
 import '../../../core/utils/validacao_texto.dart';
+import '../../history/presentation/historico_eventos.dart';
 import '../data/models/arquivo_selecionado.dart';
 import 'nova_analise_controller.dart';
 import 'widgets/analise_input_field.dart';
@@ -139,6 +140,7 @@ class _NewAnalysisScreenState extends ConsumerState<NewAnalysisScreen> {
     );
 
     if (resultado != null && mounted) {
+      avisarHistoricoAlterado(ref);
       context.pushReplacement('/historico/${resultado.analiseId}');
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/historico_api.dart';
 import '../data/models/analise_resumo.dart';
+import 'historico_eventos.dart';
 
 const _tamanhoPagina = 10;
 
@@ -52,17 +53,19 @@ class HistoricoState {
       case OrdenacaoHistorico.recentes:
         break;
       case OrdenacaoHistorico.maiorIntensidade:
-        resultado = [...resultado]..sort(
-          (a, b) => (b.pontuacaoIntensidade ?? -1).compareTo(
-            a.pontuacaoIntensidade ?? -1,
-          ),
-        );
+        resultado = [...resultado]
+          ..sort(
+            (a, b) => (b.pontuacaoIntensidade ?? -1).compareTo(
+              a.pontuacaoIntensidade ?? -1,
+            ),
+          );
       case OrdenacaoHistorico.menorIntensidade:
-        resultado = [...resultado]..sort(
-          (a, b) => (a.pontuacaoIntensidade ?? 999).compareTo(
-            b.pontuacaoIntensidade ?? 999,
-          ),
-        );
+        resultado = [...resultado]
+          ..sort(
+            (a, b) => (a.pontuacaoIntensidade ?? 999).compareTo(
+              b.pontuacaoIntensidade ?? 999,
+            ),
+          );
     }
 
     return resultado;
@@ -99,16 +102,23 @@ class HistoricoController extends StateNotifier<HistoricoState> {
 
   final HistoricoApi _api;
 
-  Future<void> carregar() async {
-    state = state.copyWith(loading: true, errorMessage: null);
+  // silencioso: atualiza por trás, mantendo a lista, a busca e os filtros na tela.
+  Future<void> carregar({bool silencioso = false}) async {
+    if (!silencioso) {
+      state = state.copyWith(loading: true, errorMessage: null);
+    }
     try {
       final itens = await _api.listar();
+      if (!mounted) return;
       state = state.copyWith(
         loading: false,
         itens: itens,
-        quantidadeVisivel: _tamanhoPagina,
+        quantidadeVisivel: silencioso
+            ? state.quantidadeVisivel
+            : _tamanhoPagina,
       );
     } on ApiException catch (e) {
+      if (!mounted || silencioso) return;
       state = state.copyWith(loading: false, errorMessage: e.message);
     }
   }
@@ -143,5 +153,10 @@ final historicoControllerProvider =
     StateNotifierProvider.autoDispose<HistoricoController, HistoricoState>((
       ref,
     ) {
-      return HistoricoController(ref.watch(historicoApiProvider));
+      final controller = HistoricoController(ref.watch(historicoApiProvider));
+      ref.listen<int>(
+        historicoAlteradoProvider,
+        (_, _) => controller.carregar(silencioso: true),
+      );
+      return controller;
     });

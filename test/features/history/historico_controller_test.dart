@@ -2,6 +2,8 @@ import 'package:divergia_app/core/network/api_exception.dart';
 import 'package:divergia_app/features/history/data/historico_api.dart';
 import 'package:divergia_app/features/history/data/models/analise_resumo.dart';
 import 'package:divergia_app/features/history/presentation/historico_controller.dart';
+import 'package:divergia_app/features/history/presentation/historico_eventos.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -169,5 +171,32 @@ void main() {
     controller.filtrarPorTipo('SENTIDO');
 
     expect(controller.state.itensFiltrados.map((e) => e.id), ['1']);
+  });
+  test('novaAnaliseApareceNaListaQuandoOHistoricoEAvisadoMantendoOFiltro', () async {
+    var chamadas = 0;
+    when(() => api.listar()).thenAnswer((_) async {
+      chamadas++;
+      return chamadas == 1
+          ? [_item('1', tipoDesvio: 'SENTIDO')]
+          : [_item('nova', tipoDesvio: 'POSICAO'), _item('1', tipoDesvio: 'SENTIDO')];
+    });
+    final container = ProviderContainer(
+      overrides: [historicoApiProvider.overrideWithValue(api)],
+    );
+    addTearDown(container.dispose);
+    final sub = container.listen(historicoControllerProvider, (_, _) {});
+    addTearDown(sub.close);
+    await Future<void>.delayed(Duration.zero);
+    container.read(historicoControllerProvider.notifier).filtrarPorTipo('POSICAO');
+    expect(container.read(historicoControllerProvider).itensFiltrados, isEmpty);
+
+    container.read(historicoAlteradoProvider.notifier).state++;
+    await Future<void>.delayed(Duration.zero);
+
+    final estado = container.read(historicoControllerProvider);
+    expect(estado.loading, isFalse);
+    expect(estado.itens.map((i) => i.id), ['nova', '1']);
+    expect(estado.filtroTipo, 'POSICAO');
+    expect(estado.itensFiltrados.map((i) => i.id), ['nova']);
   });
 }

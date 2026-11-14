@@ -14,6 +14,7 @@ import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/fade_slide_in.dart';
 import '../../../core/widgets/primary_button.dart';
+import '../../history/presentation/historico_eventos.dart';
 import 'profile_controller.dart';
 
 const _extensoesImagemAceitas = ['jpg', 'jpeg', 'png', 'webp'];
@@ -69,6 +70,7 @@ class ProfileScreen extends ConsumerWidget {
     final sucesso = await ref
         .read(profileControllerProvider.notifier)
         .excluirHistorico();
+    if (sucesso) avisarHistoricoAlterado(ref);
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -107,7 +109,8 @@ class ProfileScreen extends ConsumerWidget {
     final confirmado = await _confirmar(
       context,
       titulo: 'Sair da conta',
-      mensagem: 'Você precisará fazer login novamente para continuar usando o app.',
+      mensagem:
+          'Você precisará fazer login novamente para continuar usando o app.',
       textoConfirmar: 'Sair',
     );
     if (!confirmado || !context.mounted) return;
@@ -136,9 +139,7 @@ class ProfileScreen extends ConsumerWidget {
         .atualizarFotoPerfil(bytes: bytesRecortados, nomeArquivo: 'foto.png');
     if (!context.mounted) return;
     if (erro != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(erro)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(erro)));
     }
   }
 
@@ -183,8 +184,9 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       TextButton(
-                        onPressed: () =>
-                            ref.read(profileControllerProvider.notifier).carregar(),
+                        onPressed: () => ref
+                            .read(profileControllerProvider.notifier)
+                            .carregar(),
                         child: const Text('Tentar novamente'),
                       ),
                     ],
@@ -301,8 +303,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsRow(
                           label: 'Política de Privacidade',
-                          onTap: () =>
-                              context.push('/politica-de-privacidade'),
+                          onTap: () => context.push('/politica-de-privacidade'),
                           trailing: Icon(
                             LucideIcons.chevronRight,
                             size: 14,

@@ -47,6 +47,7 @@ class ProfileController extends StateNotifier<ProfileState> {
     try {
       await _authApi.logout();
     } on ApiException {
+      // Falha ao revogar o token no servidor não pode impedir a pessoa de sair no aparelho.
     }
     await _sessionController.onLogout();
   }

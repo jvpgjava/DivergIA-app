@@ -135,4 +135,33 @@ void main() {
       ),
     );
   });
+  test('emailQueJaTemContaMostraMensagemNeutraQuandoOLoginFalha', () async {
+    when(
+      () => authApi.cadastrar(
+        nome: 'Ana',
+        email: 'ana@example.com',
+        senha: 'senha12345',
+      ),
+    ).thenAnswer(
+      (_) async => Usuario(
+        id: 'qualquer',
+        nome: 'Ana',
+        email: 'ana@example.com',
+        criadoEm: DateTime.now(),
+      ),
+    );
+    when(
+      () => authApi.login(email: 'ana@example.com', senha: 'senha12345'),
+    ).thenThrow(const UnauthorizedException('E-mail ou senha inválidos'));
+
+    final sucesso = await controller.submit(
+      nome: 'Ana',
+      email: 'ana@example.com',
+      senha: 'senha12345',
+    );
+
+    expect(sucesso, isFalse);
+    expect(controller.state.errorMessage, emailIndisponivel);
+    expect(sessionController.status, isNot(SessionStatus.authenticated));
+  });
 }
