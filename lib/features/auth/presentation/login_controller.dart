@@ -1,8 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/auth/login_google.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/auth_api.dart';
 import 'session_controller.dart';
+
+const loginGoogleIndisponivel = 'O login com Google ainda não está disponível.';
+const falhaLoginGoogle =
+    'Não foi possível entrar com o Google. Tente novamente.';
 
 class LoginState {
   const LoginState({this.loading = false, this.errorMessage});
@@ -15,11 +20,12 @@ class LoginState {
 }
 
 class LoginController extends StateNotifier<LoginState> {
-  LoginController(this._authApi, this._sessionController)
+  LoginController(this._authApi, this._sessionController, this._loginGoogle)
     : super(const LoginState());
 
   final AuthApi _authApi;
   final SessionController _sessionController;
+  final LoginGoogle _loginGoogle;
 
   Future<bool> submit({required String email, required String senha}) async {
     state = state.copyWith(loading: true, errorMessage: null);
@@ -36,6 +42,32 @@ class LoginController extends StateNotifier<LoginState> {
       return false;
     }
   }
+
+  // Entra na conta com o e-mail do Google, ou cria uma na hora (o backend decide).
+  Future<bool> entrarComGoogle() async {
+    state = state.copyWith(loading: true, errorMessage: null);
+    try {
+      final idToken = await _loginGoogle.obterIdToken();
+      if (idToken == null) {
+        state = const LoginState();
+        return false;
+      }
+      final token = await _authApi.entrarComGoogle(idToken);
+      await _sessionController.onLoginSuccess(
+        accessToken: token.accessToken,
+        expiraEm: token.expiraEm,
+      );
+      state = state.copyWith(loading: false);
+      return true;
+    } on ApiException catch (e) {
+      state = LoginState(loading: false, errorMessage: e.message);
+    } on LoginGoogleIndisponivel {
+      state = const LoginState(errorMessage: loginGoogleIndisponivel);
+    } catch (_) {
+      state = const LoginState(errorMessage: falhaLoginGoogle);
+    }
+    return false;
+  }
 }
 
 final loginControllerProvider =
@@ -43,5 +75,6 @@ final loginControllerProvider =
       return LoginController(
         ref.watch(authApiProvider),
         ref.watch(sessionControllerProvider.notifier),
+        ref.watch(loginGoogleProvider),
       );
     });

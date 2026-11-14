@@ -1,3 +1,4 @@
+import 'package:divergia_app/core/auth/login_google.dart';
 import 'package:divergia_app/core/network/api_exception.dart';
 import 'package:divergia_app/core/storage/secure_token_storage.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
@@ -9,6 +10,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockAuthApi extends Mock implements AuthApi {}
+
+class _LoginGoogleFalso implements LoginGoogle {
+  Future<String?> Function() resposta = () async => 'id-token-google';
+
+  @override
+  Future<String?> obterIdToken() => resposta();
+}
 
 class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
   final Map<String, String> _values = {};
@@ -54,6 +62,7 @@ void main() {
   late _MockAuthApi authApi;
   late SessionController sessionController;
   late LoginController controller;
+  late _LoginGoogleFalso google;
 
   setUp(() {
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
@@ -62,7 +71,8 @@ void main() {
       SecureTokenStorage(),
       duracaoMinimaSplash: Duration.zero,
     );
-    controller = LoginController(authApi, sessionController);
+    google = _LoginGoogleFalso();
+    controller = LoginController(authApi, sessionController, google);
   });
 
   test('submitComSucessoDeveAutenticarASessao', () async {
@@ -100,5 +110,52 @@ void main() {
     expect(controller.state.loading, isFalse);
     expect(controller.state.errorMessage, 'E-mail ou senha inválidos.');
     expect(sessionController.status, isNot(SessionStatus.authenticated));
+  });
+  test('entrarComGoogleAutenticaASessaoComOTokenDoBackend', () async {
+    when(() => authApi.entrarComGoogle('id-token-google')).thenAnswer(
+      (_) async => TokenAcesso(
+        accessToken: 'jwt-google',
+        expiraEm: DateTime.now().add(const Duration(minutes: 15)),
+      ),
+    );
+
+    expect(await controller.entrarComGoogle(), isTrue);
+    expect(controller.state.errorMessage, isNull);
+    expect(sessionController.status, SessionStatus.authenticated);
+  });
+
+  test('cancelarAEscolhaDeContaNaoMostraErro', () async {
+    google.resposta = () async => null;
+
+    expect(await controller.entrarComGoogle(), isFalse);
+    expect(controller.state.loading, isFalse);
+    expect(controller.state.errorMessage, isNull);
+    verifyNever(() => authApi.entrarComGoogle(any()));
+  });
+
+  test('semConfiguracaoMostraQueOLoginComGoogleNaoEstaDisponivel', () async {
+    google.resposta = () async => throw const LoginGoogleIndisponivel();
+
+    expect(await controller.entrarComGoogle(), isFalse);
+    expect(controller.state.errorMessage, loginGoogleIndisponivel);
+  });
+
+  test('tokenRecusadoPeloServidorMostraAMensagemDoServidor', () async {
+    when(() => authApi.entrarComGoogle(any())).thenThrow(
+      const UnauthorizedException(
+        'Não foi possível entrar com o Google. Tente novamente.',
+      ),
+    );
+
+    expect(await controller.entrarComGoogle(), isFalse);
+    expect(controller.state.errorMessage, contains('Google'));
+    expect(sessionController.status, isNot(SessionStatus.authenticated));
+  });
+
+  test('falhaInesperadaDoSdkDoGoogleViraMensagemAmigavel', () async {
+    google.resposta = () async => throw Exception('PlatformException interna');
+
+    expect(await controller.entrarComGoogle(), isFalse);
+    expect(controller.state.errorMessage, falhaLoginGoogle);
   });
 }

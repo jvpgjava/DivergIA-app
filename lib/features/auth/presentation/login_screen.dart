@@ -38,10 +38,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
   }
 
-  void _avisarEmBreve() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Login social ainda não disponível.')),
-    );
+  Future<void> _entrarComGoogle() async {
+    await ref.read(loginControllerProvider.notifier).entrarComGoogle();
   }
 
   @override
@@ -130,7 +128,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _SocialButton(label: 'Google', onTap: _avisarEmBreve),
+                _SocialButton(
+                  label: 'Google',
+                  icone: 'assets/icon/google-icon.png',
+                  carregando: loginState.loading,
+                  onTap: _entrarComGoogle,
+                ),
                 const SizedBox(height: 32),
                 Wrap(
                   alignment: WrapAlignment.center,
@@ -162,15 +165,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class _SocialButton extends StatelessWidget {
-  const _SocialButton({required this.label, required this.onTap});
+  const _SocialButton({
+    required this.label,
+    required this.icone,
+    required this.onTap,
+    this.carregando = false,
+  });
 
   final String label;
+  final String icone;
   final VoidCallback onTap;
+  final bool carregando;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: carregando ? null : onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
         height: 48,
@@ -182,14 +192,15 @@ class _SocialButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'G',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF4285F4),
-              ),
-            ),
+            if (carregando)
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              // cacheWidth: o PNG tem 1200 px; decodifica só no tamanho exibido.
+              Image.asset(icone, width: 20, height: 20, cacheWidth: 60),
             const SizedBox(width: 8),
             Text(
               label,

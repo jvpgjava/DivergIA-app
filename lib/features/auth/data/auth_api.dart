@@ -33,6 +33,14 @@ class AuthApi {
     return TokenAcesso.fromJson(response.data!);
   }
 
+  Future<TokenAcesso> entrarComGoogle(String idToken) async {
+    final response = await _client.post<Map<String, dynamic>>(
+      '/api/auth/google',
+      data: {'idToken': idToken},
+    );
+    return TokenAcesso.fromJson(response.data!);
+  }
+
   Future<void> logout() => _client.post<void>('/api/auth/logout');
 
   Future<Usuario> me() async {

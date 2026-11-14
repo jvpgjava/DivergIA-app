@@ -143,13 +143,18 @@ void main() {
     expect(find.text('tela de esqueci senha'), findsOneWidget);
   });
 
-  testWidgets('deveAvisarQueLoginSocialNaoEstaDisponivel', (tester) async {
+  testWidgets('googleSemClientIdConfiguradoAvisaQueNaoEstaDisponivel', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildApp());
 
     await tester.tap(find.text('Google'));
     await tester.pump();
 
-    expect(find.text('Login social ainda não disponível.'), findsOneWidget);
+    expect(
+      find.text('O login com Google ainda não está disponível.'),
+      findsOneWidget,
+    );
     verifyNever(
       () => authApi.login(
         email: any(named: 'email'),
