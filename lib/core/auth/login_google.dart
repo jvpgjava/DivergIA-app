@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -30,6 +31,7 @@ class LoginGoogleNativo implements LoginGoogle {
       final conta = await google.authenticate();
       return conta.authentication.idToken;
     } on GoogleSignInException catch (e) {
+      debugPrint('GoogleSignIn: ${e.code} | ${e.description} | ${e.details}');
       if (e.code == GoogleSignInExceptionCode.canceled) return null;
       rethrow;
     }
