@@ -110,8 +110,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 16),
                 PrimaryButton(
                   label: 'Entrar',
-                  loading: loginState.loading,
-                  onPressed: _submit,
+                  // Durante o login o botão só fica esmaecido e sem toque, sem spinner.
+                  onPressed: loginState.loading ? null : _submit,
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -182,34 +182,33 @@ class _SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: carregando ? null : onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        height: 48,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          border: Border.all(color: context.colors.border),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (carregando)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else
+    // Durante o login o botão só fica esmaecido e sem toque, sem spinner.
+    return Opacity(
+      opacity: carregando ? 0.5 : 1,
+      child: InkWell(
+        onTap: carregando ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          height: 48,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(color: context.colors.border),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               // cacheWidth: o PNG tem 1200 px; decodifica só no tamanho exibido.
               Image.asset(icone, width: 20, height: 20, cacheWidth: 60),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: AppTypography.bodyEmphasis(context).copyWith(fontSize: 14),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: AppTypography.bodyEmphasis(
+                  context,
+                ).copyWith(fontSize: 14),
+              ),
+            ],
+          ),
         ),
       ),
     );

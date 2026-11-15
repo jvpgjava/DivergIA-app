@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:divergia_app/core/network/api_exception.dart';
 import 'package:divergia_app/core/storage/secure_token_storage.dart';
 import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
+import 'package:divergia_app/features/auth/data/models/token_acesso.dart';
 import 'package:divergia_app/features/auth/presentation/login_screen.dart';
 import 'package:divergia_app/features/auth/presentation/session_controller.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +126,40 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('E-mail ou senha inválidos.'), findsOneWidget);
+  });
+
+  testWidgets('duranteOLoginOsBotoesFicamEsmaecidosSemSpinnerENaoRespondemAoToque', (
+    tester,
+  ) async {
+    final resposta = Completer<TokenAcesso>();
+    when(
+      () => authApi.login(email: 'ana@example.com', senha: 'senha12345'),
+    ).thenAnswer((_) => resposta.future);
+
+    await tester.pumpWidget(buildApp());
+    await tester.enterText(find.byType(TextFormField).first, 'ana@example.com');
+    await tester.enterText(find.byType(TextFormField).last, 'senha12345');
+    await tester.tap(find.text('Entrar'));
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.text('Entrar'), findsOneWidget);
+    expect(find.text('Google'), findsOneWidget);
+    final opacidades = tester
+        .widgetList<Opacity>(find.byType(Opacity))
+        .map((o) => o.opacity)
+        .where((o) => o < 1);
+    expect(opacidades.length, greaterThanOrEqualTo(2));
+
+    await tester.tap(find.text('Entrar'));
+    await tester.tap(find.text('Google'));
+    await tester.pump();
+    verify(
+      () => authApi.login(email: 'ana@example.com', senha: 'senha12345'),
+    ).called(1);
+
+    resposta.complete(const TokenAcesso(accessToken: 'jwt'));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('deveNavegarParaCriarContaAoTocarNoLink', (tester) async {

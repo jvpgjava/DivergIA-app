@@ -134,7 +134,7 @@ class _Conteudo extends ConsumerWidget {
               Expanded(
                 child: _StatCard(
                   chave: const Key('analises-hoje'),
-                  rotulo: 'Hoje',
+                  rotulo: 'Análises hoje',
                   valor: '${estatisticas.analisesHoje}',
                 ),
               ),
@@ -149,7 +149,7 @@ class _Conteudo extends ConsumerWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  rotulo: 'Por análise',
+                  rotulo: 'Divergências por análise',
                   chave: const Key('media-por-analise'),
                   valor: _formatarMedia(porAnalise),
                 ),
