@@ -9,11 +9,15 @@ import 'package:mocktail/mocktail.dart';
 
 class _MockDevApi extends Mock implements DevApi {}
 
-EstatisticasGlobais _estatisticas({required int total, int hoje = 0}) {
+EstatisticasGlobais _estatisticas({
+  required int total,
+  int hoje = 0,
+  int derivas = 9,
+}) {
   final hojeData = DateTime(2026, 11, 15);
   return EstatisticasGlobais(
     totalAnalises: total,
-    totalDerivas: 9,
+    totalDerivas: derivas,
     derivasPorTipo: const {'SENTIDO': 5, 'POSICAO': 3, 'INTENSIDADE': 1},
     serieDiaria: [
       for (var i = 6; i >= 0; i--)
@@ -64,11 +68,34 @@ void main() {
     expect(texto(tester, 'total-analises'), '42');
     expect(texto(tester, 'analises-hoje'), '4');
     expect(texto(tester, 'total-derivas'), '9');
-    expect(find.textContaining('Ao vivo'), findsOneWidget);
+    expect(find.textContaining('Ao vivo'), findsNothing);
+    expect(find.textContaining('apagaram'), findsNothing);
     expect(find.text('Desvio de Sentido'), findsOneWidget);
     for (final periodo in [7, 30, 90]) {
       expect(find.byKey(Key('periodo-$periodo')), findsOneWidget);
     }
+  });
+
+  testWidgets('mediaExataApareceComoInteiroESemDecimalDesnecessario', (
+    tester,
+  ) async {
+    when(
+      () => api.estatisticas(dias: any(named: 'dias')),
+    ).thenAnswer((_) async => _estatisticas(total: 3, derivas: 6));
+
+    await abrir(tester);
+
+    expect(texto(tester, 'media-por-analise'), '2');
+  });
+
+  testWidgets('mediaQuebradaMostraUmaCasaDecimalComVirgula', (tester) async {
+    when(
+      () => api.estatisticas(dias: any(named: 'dias')),
+    ).thenAnswer((_) async => _estatisticas(total: 4, derivas: 6));
+
+    await abrir(tester);
+
+    expect(texto(tester, 'media-por-analise'), '1,5');
   });
 
   testWidgets('escolherOutroPeriodoPedeOsDadosDaNovaJanela', (tester) async {

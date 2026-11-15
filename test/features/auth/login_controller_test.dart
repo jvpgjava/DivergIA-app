@@ -81,7 +81,6 @@ void main() {
     ).thenAnswer(
       (_) async => TokenAcesso(
         accessToken: 'jwt-abc',
-        expiraEm: DateTime.now().add(const Duration(minutes: 15)),
       ),
     );
 
@@ -115,7 +114,6 @@ void main() {
     when(() => authApi.entrarComGoogle('id-token-google')).thenAnswer(
       (_) async => TokenAcesso(
         accessToken: 'jwt-google',
-        expiraEm: DateTime.now().add(const Duration(minutes: 15)),
       ),
     );
 

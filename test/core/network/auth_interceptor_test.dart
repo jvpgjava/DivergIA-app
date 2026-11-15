@@ -23,11 +23,16 @@ class _FakeErrorHandler extends ErrorInterceptorHandler {
 void main() {
   late _MockTokenStorage tokenStorage;
   late AuthInterceptor interceptor;
+  late int sessoesInvalidadas;
   late RequestOptions requestOptions;
 
   setUp(() {
     tokenStorage = _MockTokenStorage();
-    interceptor = AuthInterceptor(tokenStorage);
+    sessoesInvalidadas = 0;
+    interceptor = AuthInterceptor(
+      tokenStorage,
+      onSessaoInvalida: () async => sessoesInvalidadas++,
+    );
     requestOptions = RequestOptions(path: '/api/historico');
   });
 
@@ -49,6 +54,50 @@ void main() {
     await interceptor.onRequest(requestOptions, handler);
 
     expect(handler.passed!.headers.containsKey('Authorization'), isFalse);
+  });
+
+  test('401DeRequisicaoComTokenEncerraASessao', () async {
+    when(() => tokenStorage.clear()).thenAnswer((_) async {});
+    final comToken = RequestOptions(
+      path: '/api/historico',
+      headers: {'Authorization': 'Bearer token-abc'},
+    );
+    final err = DioException(
+      requestOptions: comToken,
+      response: Response(requestOptions: comToken, statusCode: 401),
+    );
+
+    await interceptor.onError(err, _FakeErrorHandler());
+
+    expect(sessoesInvalidadas, 1);
+  });
+
+  test('401SemTokenEnviadoEhLoginRecusadoENaoEncerraSessao', () async {
+    when(() => tokenStorage.clear()).thenAnswer((_) async {});
+    final err = DioException(
+      requestOptions: requestOptions,
+      response: Response(requestOptions: requestOptions, statusCode: 401),
+    );
+
+    await interceptor.onError(err, _FakeErrorHandler());
+
+    expect(sessoesInvalidadas, 0);
+  });
+
+  test('outrosErrosNaoEncerramASessao', () async {
+    final comToken = RequestOptions(
+      path: '/api/dev/estatisticas',
+      headers: {'Authorization': 'Bearer token-abc'},
+    );
+    final err = DioException(
+      requestOptions: comToken,
+      response: Response(requestOptions: comToken, statusCode: 403),
+    );
+
+    await interceptor.onError(err, _FakeErrorHandler());
+
+    expect(sessoesInvalidadas, 0);
+    verifyNever(() => tokenStorage.clear());
   });
 
   test('deveLimparStorageQuandoRespostaFor401', () async {

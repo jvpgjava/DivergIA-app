@@ -60,10 +60,7 @@ void main() {
         data: {'email': 'ana@example.com', 'senha': 'senha12345'},
       ),
     ).thenAnswer(
-      (_) async => _jsonResponse({
-        'accessToken': 'jwt-abc',
-        'expiraEm': '2026-01-01T10:15:00.000Z',
-      }),
+      (_) async => _jsonResponse({'accessToken': 'jwt-abc'}),
     );
 
     final token = await authApi.login(
@@ -72,7 +69,6 @@ void main() {
     );
 
     expect(token.accessToken, 'jwt-abc');
-    expect(token.expiraEm, DateTime.parse('2026-01-01T10:15:00.000Z'));
   });
 
   test('recuperarSenhaDeveChamarOEndpointComOEmail', () async {

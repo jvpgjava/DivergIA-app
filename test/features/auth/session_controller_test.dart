@@ -74,7 +74,6 @@ void main() {
   test('deveFicarAuthenticatedQuandoHaTokenValido', () async {
     await storage.saveSession(
       accessToken: 'token-abc',
-      expiraEm: DateTime.now().add(const Duration(minutes: 15)),
     );
     final controller = criarController();
 
@@ -83,21 +82,15 @@ void main() {
     expect(controller.status, SessionStatus.authenticated);
   });
 
-  test(
-    'deveFicarUnauthenticatedELimparStorageQuandoTokenEstaExpirado',
-    () async {
-      await storage.saveSession(
-        accessToken: 'token-vencido',
-        expiraEm: DateTime.now().subtract(const Duration(minutes: 1)),
-      );
-      final controller = criarController();
+  test('sessaoNaoTemPrazoDeValidadeNoAparelho', () async {
+    await storage.saveSession(accessToken: 'token-de-meses-atras');
+    final controller = criarController();
 
-      await controller.checkSession();
+    await controller.checkSession();
 
-      expect(controller.status, SessionStatus.unauthenticated);
-      expect(await storage.readAccessToken(), isNull);
-    },
-  );
+    expect(controller.status, SessionStatus.authenticated);
+    expect(await storage.readAccessToken(), 'token-de-meses-atras');
+  });
 
   test('onLoginSuccessDeveSalvarSessaoEFicarAuthenticated', () async {
     final controller = criarController();
@@ -105,7 +98,6 @@ void main() {
 
     await controller.onLoginSuccess(
       accessToken: 'novo-token',
-      expiraEm: DateTime.now().add(const Duration(minutes: 15)),
     );
 
     expect(controller.status, SessionStatus.authenticated);
@@ -115,7 +107,6 @@ void main() {
   test('onLogoutDeveLimparSessaoEFicarUnauthenticated', () async {
     await storage.saveSession(
       accessToken: 'token-abc',
-      expiraEm: DateTime.now().add(const Duration(minutes: 15)),
     );
     final controller = criarController();
     await controller.checkSession();

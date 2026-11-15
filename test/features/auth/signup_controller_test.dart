@@ -86,7 +86,6 @@ void main() {
     ).thenAnswer(
       (_) async => TokenAcesso(
         accessToken: 'jwt-abc',
-        expiraEm: DateTime.now().add(const Duration(minutes: 15)),
       ),
     );
 

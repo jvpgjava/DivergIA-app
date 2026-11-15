@@ -34,27 +34,14 @@ class SessionController extends ChangeNotifier {
   }
 
   Future<bool> _lerSessaoValida() async {
+    // A sessão não tem data de expiração: vale enquanto o token existir. Se o servidor o recusar
+    // (revogado em outro aparelho, token antigo), o 401 encerra a sessão pelo AuthInterceptor.
     final token = await _tokenStorage.readAccessToken();
-    final expiraEm = await _tokenStorage.readExpiraEm();
-
-    final sessaoValida =
-        token != null && expiraEm != null && expiraEm.isAfter(DateTime.now());
-
-    if (!sessaoValida) {
-      await _tokenStorage.clear();
-    }
-
-    return sessaoValida;
+    return token != null && token.isNotEmpty;
   }
 
-  Future<void> onLoginSuccess({
-    required String accessToken,
-    required DateTime expiraEm,
-  }) async {
-    await _tokenStorage.saveSession(
-      accessToken: accessToken,
-      expiraEm: expiraEm,
-    );
+  Future<void> onLoginSuccess({required String accessToken}) async {
+    await _tokenStorage.saveSession(accessToken: accessToken);
     status = SessionStatus.authenticated;
     notifyListeners();
   }

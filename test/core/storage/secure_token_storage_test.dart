@@ -47,7 +47,6 @@ class _FakeSecureStoragePlatform extends FlutterSecureStoragePlatform {
 
 void main() {
   late SecureTokenStorage storage;
-  final expiraEm = DateTime.utc(2030, 1, 1);
 
   setUp(() {
     FlutterSecureStoragePlatform.instance = _FakeSecureStoragePlatform();
@@ -56,22 +55,31 @@ void main() {
 
   test('deveRetornarNuloQuandoNenhumaSessaoFoiSalva', () async {
     expect(await storage.readAccessToken(), isNull);
-    expect(await storage.readExpiraEm(), isNull);
   });
 
-  test('deveSalvarELerOTokenDeAcessoEAExpiracao', () async {
-    await storage.saveSession(accessToken: 'token-abc', expiraEm: expiraEm);
+  test('deveSalvarELerOTokenDeAcesso', () async {
+    await storage.saveSession(accessToken: 'token-abc');
 
     expect(await storage.readAccessToken(), 'token-abc');
-    expect(await storage.readExpiraEm(), expiraEm);
   });
 
-  test('deveLimparASessaoSalva', () async {
-    await storage.saveSession(accessToken: 'token-abc', expiraEm: expiraEm);
+  test('deveLimparASessaoSalvaInclusiveADataDeExpiracaoDasVersoesAntigas', () async {
+    await storage.saveSession(accessToken: 'token-abc');
+    await FlutterSecureStoragePlatform.instance.write(
+      key: 'access_token_expira_em',
+      value: '2030-01-01T00:00:00.000Z',
+      options: const {},
+    );
 
     await storage.clear();
 
     expect(await storage.readAccessToken(), isNull);
-    expect(await storage.readExpiraEm(), isNull);
+    expect(
+      await FlutterSecureStoragePlatform.instance.read(
+        key: 'access_token_expira_em',
+        options: const {},
+      ),
+      isNull,
+    );
   });
 }

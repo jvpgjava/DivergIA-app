@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/auth/presentation/session_controller.dart';
 import '../storage/secure_token_storage.dart';
 import 'api_config.dart';
 import 'api_exception.dart';
@@ -9,18 +10,24 @@ import 'auth_interceptor.dart';
 import 'error_interceptor.dart';
 
 class ApiClient {
-  ApiClient({Dio? dio, SecureTokenStorage? tokenStorage})
-    : _dio =
-          dio ??
-          Dio(
-            BaseOptions(
-              baseUrl: ApiConfig.baseUrl,
-              connectTimeout: ApiConfig.connectTimeout,
-              receiveTimeout: ApiConfig.receiveTimeout,
-            ),
-          ) {
+  ApiClient({
+    Dio? dio,
+    SecureTokenStorage? tokenStorage,
+    Future<void> Function()? onSessaoInvalida,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               baseUrl: ApiConfig.baseUrl,
+               connectTimeout: ApiConfig.connectTimeout,
+               receiveTimeout: ApiConfig.receiveTimeout,
+             ),
+           ) {
     _dio.interceptors.addAll([
-      AuthInterceptor(tokenStorage ?? SecureTokenStorage()),
+      AuthInterceptor(
+        tokenStorage ?? SecureTokenStorage(),
+        onSessaoInvalida: onSessaoInvalida,
+      ),
       ErrorInterceptor(),
       if (kDebugMode)
         LogInterceptor(
@@ -49,7 +56,10 @@ class ApiClient {
       data: data,
       options: receiveTimeout == null
           ? null
-          : Options(receiveTimeout: receiveTimeout, sendTimeout: receiveTimeout),
+          : Options(
+              receiveTimeout: receiveTimeout,
+              sendTimeout: receiveTimeout,
+            ),
     ),
   );
 
@@ -71,5 +81,10 @@ class ApiClient {
 }
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(tokenStorage: ref.watch(secureTokenStorageProvider));
+  return ApiClient(
+    tokenStorage: ref.watch(secureTokenStorageProvider),
+    // read, não watch: só precisa do controller na hora de encerrar a sessão.
+    onSessaoInvalida: () =>
+        ref.read(sessionControllerProvider.notifier).onLogout(),
+  );
 });

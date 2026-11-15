@@ -150,7 +150,8 @@ class _Conteudo extends ConsumerWidget {
               Expanded(
                 child: _StatCard(
                   rotulo: 'Por análise',
-                  valor: porAnalise.toStringAsFixed(1).replaceAll('.', ','),
+                  chave: const Key('media-por-analise'),
+                  valor: _formatarMedia(porAnalise),
                 ),
               ),
             ],
@@ -185,12 +186,6 @@ class _TotalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final atualizado = estatisticas.geradoEm.toLocal();
-    final hora = [
-      atualizado.hour,
-      atualizado.minute,
-      atualizado.second,
-    ].map((n) => n.toString().padLeft(2, '0')).join(':');
 
     return Container(
       width: double.infinity,
@@ -202,19 +197,6 @@ class _TotalCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const _PontoAoVivo(),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Ao vivo · atualizado às $hora',
-                  style: AppTypography.caption(context),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
           // Anima de um valor para o outro quando chega uma análise nova.
           TweenAnimationBuilder<double>(
             tween: Tween<double>(end: estatisticas.totalAnalises.toDouble()),
@@ -231,48 +213,7 @@ class _TotalCard extends StatelessWidget {
             'análises realizadas no total',
             style: AppTypography.body(context),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Conta também as análises que os usuários já apagaram.',
-            style: AppTypography.caption(context),
-          ),
         ],
-      ),
-    );
-  }
-}
-
-class _PontoAoVivo extends StatefulWidget {
-  const _PontoAoVivo();
-
-  @override
-  State<_PontoAoVivo> createState() => _PontoAoVivoState();
-}
-
-class _PontoAoVivoState extends State<_PontoAoVivo>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1200),
-  )..repeat(reverse: true);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: Tween<double>(begin: 0.35, end: 1).animate(_controller),
-      child: Container(
-        width: 8,
-        height: 8,
-        decoration: const BoxDecoration(
-          color: AppColors.scoreBaixoFg,
-          shape: BoxShape.circle,
-        ),
       ),
     );
   }
@@ -335,7 +276,9 @@ class _EvolucaoCard extends StatelessWidget {
       0,
       (maior, p) => math.max(maior, math.max(p.analises, p.totalDerivas)),
     );
-    final maxY = math.max(4, maiorValor).toDouble() * 1.15;
+    // Eixo sempre em números inteiros: o passo é inteiro e o teto é múltiplo dele.
+    final passoEixo = (math.max(4, maiorValor) / 4).ceil();
+    final maxY = (passoEixo * 4).toDouble();
     final passoRotulo = math.max(1, (pontos.length / 5).ceil());
 
     return Container(
@@ -382,7 +325,23 @@ class _EvolucaoCard extends StatelessWidget {
                 maxX: math.max(1, pontos.length - 1).toDouble(),
                 minY: 0,
                 maxY: maxY,
+                lineTouchData: LineTouchData(
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipItems: (spots) => [
+                      for (final spot in spots)
+                        LineTooltipItem(
+                          '${spot.bar.color == _corAnalises ? 'Análises' : 'Divergências'}: ${spot.y.round()}',
+                          const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
                 gridData: FlGridData(
+                  horizontalInterval: passoEixo.toDouble(),
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (_) =>
                       FlLine(color: colors.border, strokeWidth: 1),
@@ -399,10 +358,8 @@ class _EvolucaoCard extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 32,
+                      interval: passoEixo.toDouble(),
                       getTitlesWidget: (value, meta) {
-                        if (value != value.roundToDouble()) {
-                          return const SizedBox.shrink();
-                        }
                         return Text(
                           value.toInt().toString(),
                           style: AppTypography.caption(context),
@@ -471,6 +428,11 @@ class _EvolucaoCard extends StatelessWidget {
     );
   }
 }
+
+// Inteiro quando for exato (2, não 2,0); senão uma casa decimal com vírgula.
+String _formatarMedia(double valor) => valor == valor.roundToDouble()
+    ? '${valor.round()}'
+    : valor.toStringAsFixed(1).replaceAll('.', ',');
 
 String _rotuloDia(DateTime dia) =>
     '${dia.day.toString().padLeft(2, '0')}/${dia.month.toString().padLeft(2, '0')}';

@@ -40,10 +40,7 @@ class SignupController extends StateNotifier<SignupState> {
         // O servidor não revela se o e-mail já tem conta: o cadastro "passa" e só o login falha.
         throw const ValidationException(emailIndisponivel);
       }
-      await _sessionController.onLoginSuccess(
-        accessToken: token.accessToken,
-        expiraEm: token.expiraEm,
-      );
+      await _sessionController.onLoginSuccess(accessToken: token.accessToken);
       state = state.copyWith(loading: false);
       return true;
     } on ApiException catch (e) {

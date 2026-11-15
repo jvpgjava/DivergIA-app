@@ -31,10 +31,7 @@ class LoginController extends StateNotifier<LoginState> {
     state = state.copyWith(loading: true, errorMessage: null);
     try {
       final token = await _authApi.login(email: email, senha: senha);
-      await _sessionController.onLoginSuccess(
-        accessToken: token.accessToken,
-        expiraEm: token.expiraEm,
-      );
+      await _sessionController.onLoginSuccess(accessToken: token.accessToken);
       state = state.copyWith(loading: false);
       return true;
     } on ApiException catch (e) {
@@ -53,10 +50,7 @@ class LoginController extends StateNotifier<LoginState> {
         return false;
       }
       final token = await _authApi.entrarComGoogle(idToken);
-      await _sessionController.onLoginSuccess(
-        accessToken: token.accessToken,
-        expiraEm: token.expiraEm,
-      );
+      await _sessionController.onLoginSuccess(accessToken: token.accessToken);
       state = state.copyWith(loading: false);
       return true;
     } on ApiException catch (e) {
