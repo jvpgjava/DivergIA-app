@@ -5,6 +5,7 @@ import '../../../../core/theme/app_color_tokens.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/deriva_formatting.dart';
+import '../../../../core/widgets/primary_button.dart';
 import '../../data/models/trecho_deriva.dart';
 
 class TrechoResultCard extends StatelessWidget {
@@ -23,7 +24,6 @@ class TrechoResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -45,23 +45,9 @@ class TrechoResultCard extends StatelessWidget {
           _SugestaoAceitaPainel(texto: trecho.sugestaoAceita!),
         ],
         const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: onSugerirReescrita,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: colors.textPrimary,
-              side: BorderSide(color: colors.border),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(26),
-              ),
-            ),
-            child: Text(
-              'Sugerir reescrita fiel',
-              style: AppTypography.label(context),
-            ),
-          ),
+        PrimaryButton(
+          label: 'Sugerir reescrita fiel',
+          onPressed: onSugerirReescrita,
         ),
       ],
     );

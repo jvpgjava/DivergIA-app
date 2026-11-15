@@ -19,36 +19,30 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final disabled = onPressed == null || loading;
 
+    // Azul claro liso, texto branco: sem gradiente, brilho nem sombra.
     return Opacity(
       opacity: disabled && !loading ? 0.6 : 1,
-      child: InkWell(
-        onTap: disabled ? null : onPressed,
+      child: Material(
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(26),
-        child: Container(
-          height: 52,
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryButtonGradient,
-            borderRadius: BorderRadius.circular(26),
-            boxShadow: const [
-              BoxShadow(
-                color: AppColors.primaryShadow,
-                blurRadius: 6,
-                offset: Offset(0, 4),
-              ),
-            ],
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: disabled ? null : onPressed,
+          child: Container(
+            height: 52,
+            width: double.infinity,
+            alignment: Alignment.center,
+            child: loading
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                : Text(label, style: AppTypography.buttonText),
           ),
-          child: loading
-              ? const SizedBox(
-                  height: 22,
-                  width: 22,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2.5,
-                  ),
-                )
-              : Text(label, style: AppTypography.buttonText),
         ),
       ),
     );
