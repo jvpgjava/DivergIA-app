@@ -289,6 +289,26 @@ class ProfileScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  if (state.usuario!.ehDev) ...[
+                    const SizedBox(height: 16),
+                    FadeSlideIn(
+                      atraso: atrasoEmCascata(3),
+                      child: _SettingsGroup(
+                        titulo: 'Desenvolvedor',
+                        children: [
+                          _SettingsRow(
+                            label: 'Painel de desenvolvedor',
+                            onTap: () => context.push('/dev/estatisticas'),
+                            trailing: Icon(
+                              LucideIcons.chevronRight,
+                              size: 14,
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   FadeSlideIn(
                     atraso: atrasoEmCascata(3),

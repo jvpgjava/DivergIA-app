@@ -136,6 +136,43 @@ void main() {
     expect(find.text('Tentar novamente'), findsOneWidget);
   });
 
+  testWidgets('usuarioComumNaoVeAOpcaoDoPainelDeDesenvolvedor', (tester) async {
+    await pumpProfileScreen(tester);
+
+    expect(find.text('Painel de desenvolvedor'), findsNothing);
+    expect(find.text('Desenvolvedor'), findsNothing);
+  });
+
+  testWidgets('usuarioDevVeAOpcaoDoPainelDeDesenvolvedor', (tester) async {
+    when(() => authApi.me()).thenAnswer(
+      (_) async => Usuario(
+        id: 'dev-1',
+        nome: 'Dev',
+        email: 'dev@example.com',
+        criadoEm: DateTime.now(),
+        papel: Usuario.papelDev,
+      ),
+    );
+
+    await pumpProfileScreen(tester);
+
+    expect(find.text('Painel de desenvolvedor'), findsOneWidget);
+  });
+
+  testWidgets('papelAusenteNaRespostaDoServidorValeComoUsuarioComum', (
+    tester,
+  ) async {
+    final usuario = Usuario.fromJson({
+      'id': 'u-1',
+      'nome': 'Ana',
+      'email': 'ana@example.com',
+      'criadoEm': '2026-11-15T12:00:00Z',
+    });
+
+    expect(usuario.ehDev, isFalse);
+    expect(usuario.copyWith(email: 'novo@example.com').papel, 'USUARIO');
+  });
+
   testWidgets('versaoMostradaVemDoPacoteInstalado', (tester) async {
     await pumpProfileScreen(tester);
 

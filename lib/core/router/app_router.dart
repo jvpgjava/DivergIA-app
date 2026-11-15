@@ -12,6 +12,7 @@ import '../../features/auth/presentation/session_controller.dart';
 import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/analysis/data/models/trecho_deriva.dart';
+import '../../features/dev/presentation/dev_estatisticas_screen.dart';
 import '../../features/history/presentation/history_screen.dart';
 import '../../features/history/presentation/tendencia_screen.dart';
 import '../../features/profile/presentation/photo_crop_screen.dart';
@@ -92,6 +93,10 @@ GoRouter buildAppRouter(SessionController sessionController) => GoRouter(
       path: '/perfil/cortar-foto',
       builder: (context, state) =>
           PhotoCropScreen(bytes: state.extra as Uint8List),
+    ),
+    GoRoute(
+      path: '/dev/estatisticas',
+      builder: (context, state) => const DevEstatisticasScreen(),
     ),
     GoRoute(
       path: '/termos-de-servico',
