@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.9+9
 
 environment:
   sdk: ^3.12.2
@@ -45,6 +45,7 @@ dependencies:
   shared_preferences: ^2.5.3
   crop_your_image: ^2.0.0
   google_sign_in: ^7.2.0
+  package_info_plus: ^10.2.2
 
 dev_dependencies:
   flutter_test:
@@ -118,22 +119,16 @@ flutter_launcher_icons:
   min_sdk_android: 21
   remove_alpha_ios: true
 
-# A API de splash screen do Android 12+ só permite mostrar o ícone do app
-# (dentro de um círculo) sobre uma cor sólida — nunca uma imagem grande
-# customizada. Por isso só a splash do Android 12+ usa a marca "d" sozinha
-# (mesmo arquivo do ícone); a splash "legada" (Android <12 e iOS) já pode
-# mostrar a logo por extenso ("divergIA") direto, sem esperar a
-# SplashScreen do Flutter aparecer depois.
+# Uma única splash: a do sistema é só um fundo liso e claro, igual ao da splash do app
+# (lib/features/auth/presentation/splash_screen.dart), que mostra a logo (clara ou escura,
+# conforme o tema do app). O Android 12+ só aceita o ícone do app dentro de um círculo, então o
+# ícone aqui é um PNG transparente; sem variante escura de propósito: o celular em tema escuro
+# não pode mudar a cor da splash, porque o app abre sempre no tema claro por padrão.
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/icon/divergia-icon-light.png
-  color_dark: "#141B2D"
-  image_dark: assets/icon/divergia-icon-dark.png
   android_12:
-    image: assets/icon/icon_foreground.png
+    image: assets/icon/splash_transparente.png
     color: "#FFFFFF"
-    image_dark: assets/icon/icon_foreground.png
-    color_dark: "#141B2D"
   android: true
   ios: true
   web: false

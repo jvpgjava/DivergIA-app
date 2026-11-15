@@ -5,38 +5,39 @@ import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import 'session_controller.dart';
 
+// A logo escura tem mais margem na imagem que a clara: larguras diferentes deixam as duas
+// com o mesmo tamanho aparente na tela.
+const _logoClara = 'assets/icon/divergia-icon-light.png';
+const _logoEscura = 'assets/icon/divergia-icon-dark.png';
+const _larguraLogoClara = 228.0;
+const _larguraLogoEscura = 238.0;
+
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(sessionControllerProvider);
-    final colors = context.colors;
     final modoEscuro = Theme.of(context).brightness == Brightness.dark;
 
+    // Fundo liso e igual ao da splash do sistema (branco no tema claro): a troca entre as duas
+    // não pode ter degrau de cor, para a abertura parecer uma tela só.
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0, -0.15),
-                  radius: 0.85,
-                  colors: [colors.primaryTint, colors.background],
-                  stops: const [0, 0.85],
-                ),
-              ),
-            ),
-          ),
           Center(
-            child: Image.asset(
-              modoEscuro
-                  ? 'assets/icon/divergia-icon-dark.png'
-                  : 'assets/icon/divergia-icon-light.png',
-              key: const Key('splash-logo'),
-              width: 228,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: 1),
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              builder: (context, opacidade, filho) =>
+                  Opacity(opacity: opacidade, child: filho),
+              child: Image.asset(
+                modoEscuro ? _logoEscura : _logoClara,
+                key: const Key('splash-logo'),
+                width: modoEscuro ? _larguraLogoEscura : _larguraLogoClara,
+              ),
             ),
           ),
           const Positioned(

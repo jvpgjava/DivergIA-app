@@ -2,6 +2,7 @@ import 'package:divergia_app/core/network/api_exception.dart';
 import 'package:divergia_app/core/storage/secure_token_storage.dart';
 import 'package:divergia_app/core/theme/app_theme.dart';
 import 'package:divergia_app/core/theme/theme_mode_controller.dart';
+import 'package:divergia_app/core/utils/app_version.dart';
 import 'package:divergia_app/features/auth/data/auth_api.dart';
 import 'package:divergia_app/features/auth/data/models/usuario.dart';
 import 'package:divergia_app/features/auth/presentation/session_controller.dart';
@@ -82,6 +83,7 @@ void main() {
   Widget buildApp() {
     return ProviderScope(
       overrides: [
+        appVersionProvider.overrideWith((ref) async => 'v1.0.9'),
         authApiProvider.overrideWithValue(authApi),
         historicoApiProvider.overrideWithValue(historicoApi),
         sessionControllerProvider.overrideWith(
@@ -117,7 +119,8 @@ void main() {
     expect(find.text('Ana Clara'), findsOneWidget);
     expect(find.text('ana.clara@example.com'), findsOneWidget);
     expect(find.text('Notificações push'), findsOneWidget);
-    expect(find.text('Modo escuro'), findsOneWidget);
+    expect(find.text('Tema'), findsOneWidget);
+    expect(find.text('Claro'), findsOneWidget);
     expect(find.text('Excluir histórico de análises'), findsOneWidget);
     expect(find.text('Excluir conta'), findsOneWidget);
     expect(find.text('Sair da conta'), findsOneWidget);
@@ -133,34 +136,70 @@ void main() {
     expect(find.text('Tentar novamente'), findsOneWidget);
   });
 
-  testWidgets('deveAlternarOModoEscuroAoTocarNoSwitch', (tester) async {
+  testWidgets('versaoMostradaVemDoPacoteInstalado', (tester) async {
     await pumpProfileScreen(tester);
 
+    expect(find.text('v1.0.9'), findsOneWidget);
+  });
+
+  testWidgets('temaComecaClaroELevaAsTresOpcoesNoPainel', (tester) async {
+    await pumpProfileScreen(tester);
     final container = ProviderScope.containerOf(
       tester.element(find.byType(ProfileScreen)),
     );
     expect(container.read(themeModeControllerProvider), ThemeMode.light);
 
-    await tester.tap(switchNaLinhaDoRotulo('Modo escuro'));
-    await tester.pump();
+    await tester.tap(find.text('Tema'));
+    await tester.pumpAndSettle();
 
-    expect(container.read(themeModeControllerProvider), ThemeMode.dark);
+    expect(find.text('Sempre claro (padrão)'), findsOneWidget);
+    expect(find.text('Sempre escuro'), findsOneWidget);
+    expect(find.text('Segue o tema do celular'), findsOneWidget);
   });
 
-  testWidgets(
-    'deveAvisarQueNotificacoesPushNaoEstaDisponivelAoTocarNoSwitch',
-    (tester) async {
+  for (final (chave, modo, rotulo) in [
+    ('tema-dark', ThemeMode.dark, 'Escuro'),
+    ('tema-system', ThemeMode.system, 'Sistema'),
+    ('tema-light', ThemeMode.light, 'Claro'),
+  ]) {
+    testWidgets('escolher${rotulo}NoPainelTrocaOTemaEFechaOPainel', (
+      tester,
+    ) async {
       await pumpProfileScreen(tester);
-
-      await tester.tap(switchNaLinhaDoRotulo('Notificações push'));
-      await tester.pump();
-
-      expect(
-        find.text('Notificações push ainda não disponível.'),
-        findsOneWidget,
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ProfileScreen)),
       );
-    },
-  );
+      if (modo == ThemeMode.light) {
+        await container
+            .read(themeModeControllerProvider.notifier)
+            .definir(ThemeMode.dark);
+        await tester.pump();
+      }
+
+      await tester.tap(find.text('Tema'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(Key(chave)));
+      await tester.pumpAndSettle();
+
+      expect(container.read(themeModeControllerProvider), modo);
+      expect(find.text('Segue o tema do celular'), findsNothing);
+      expect(find.text(rotulo), findsOneWidget);
+    });
+  }
+
+  testWidgets('deveAvisarQueNotificacoesPushNaoEstaDisponivelAoTocarNoSwitch', (
+    tester,
+  ) async {
+    await pumpProfileScreen(tester);
+
+    await tester.tap(switchNaLinhaDoRotulo('Notificações push'));
+    await tester.pump();
+
+    expect(
+      find.text('Notificações push ainda não disponível.'),
+      findsOneWidget,
+    );
+  });
 
   testWidgets('deveExcluirOHistoricoAoConfirmarNoDialogo', (tester) async {
     when(() => historicoApi.excluirTudo()).thenAnswer((_) async {});

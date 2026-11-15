@@ -33,6 +33,9 @@ android {
             applicationIdSuffix = ".dev"
         }
         release {
+            // Build de distribuição fora da loja (homologação): DIVERGIA_APP_ID_SUFFIX=.dev instala ao lado
+            // do app oficial e reaproveita o cliente Android do Google já autorizado. Vazio = pacote oficial.
+            applicationIdSuffix = System.getenv("DIVERGIA_APP_ID_SUFFIX") ?: ""
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")

@@ -135,25 +135,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   onTap: _entrarComGoogle,
                 ),
                 const SizedBox(height: 32),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 4,
-                  children: [
-                    Text(
-                      'Não tem uma conta?',
-                      style: AppTypography.body(context),
-                    ),
-                    GestureDetector(
-                      onTap: () => context.push('/signup'),
-                      child: Text(
-                        'Criar conta',
-                        style: AppTypography.body(context).copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
+                SizedBox(
+                  width: double.infinity,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 4,
+                    children: [
+                      Text(
+                        'Não tem uma conta?',
+                        style: AppTypography.body(context),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.push('/signup'),
+                        child: Text(
+                          'Criar conta',
+                          style: AppTypography.body(context).copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

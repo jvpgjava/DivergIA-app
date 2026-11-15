@@ -10,6 +10,7 @@ import '../../../core/theme/app_color_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/theme/theme_mode_controller.dart';
+import '../../../core/utils/app_version.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/fade_slide_in.dart';
@@ -143,6 +144,13 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _abrirTema(BuildContext context) {
+    return showAppBottomSheet<void>(
+      context,
+      builder: (context) => const _TemaSheet(),
+    );
+  }
+
   Future<void> _abrirAlterarSenha(BuildContext context) {
     return showAppBottomSheet<void>(
       context,
@@ -161,7 +169,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(profileControllerProvider);
     final colors = context.colors;
-    final modoEscuro = ref.watch(themeModeControllerProvider) == ThemeMode.dark;
+    final modoTema = ref.watch(themeModeControllerProvider);
 
     return Scaffold(
       backgroundColor: colors.screenBackground,
@@ -258,12 +266,24 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                         ),
                         _SettingsRow(
-                          label: 'Modo escuro',
-                          trailing: Switch(
-                            value: modoEscuro,
-                            onChanged: (valor) => ref
-                                .read(themeModeControllerProvider.notifier)
-                                .alternar(valor),
+                          label: 'Tema',
+                          onTap: () => _abrirTema(context),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _rotuloDoTema(modoTema),
+                                style: AppTypography.body(
+                                  context,
+                                ).copyWith(color: colors.textSecondary),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                LucideIcons.chevronRight,
+                                size: 16,
+                                color: colors.textSecondary,
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -313,7 +333,7 @@ class ProfileScreen extends ConsumerWidget {
                         _SettingsRow(
                           label: 'Versão',
                           trailing: Text(
-                            'v1.0.0',
+                            ref.watch(appVersionProvider).valueOrNull ?? '',
                             style: AppTypography.caption(context),
                           ),
                         ),
@@ -701,6 +721,82 @@ class _SettingsGroup extends StatelessWidget {
               Divider(height: 1, thickness: 1, color: context.colors.border),
             filho,
           ],
+        ],
+      ),
+    );
+  }
+}
+
+String _rotuloDoTema(ThemeMode modo) => switch (modo) {
+  ThemeMode.light => 'Claro',
+  ThemeMode.dark => 'Escuro',
+  ThemeMode.system => 'Sistema',
+};
+
+class _TemaSheet extends ConsumerWidget {
+  const _TemaSheet();
+
+  static const _opcoes = [
+    (ThemeMode.light, 'Claro', 'Sempre claro (padrão)'),
+    (ThemeMode.dark, 'Escuro', 'Sempre escuro'),
+    (ThemeMode.system, 'Sistema', 'Segue o tema do celular'),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final atual = ref.watch(themeModeControllerProvider);
+    final colors = context.colors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Tema', style: AppTypography.cardTitle(context)),
+          const SizedBox(height: 8),
+          for (final (modo, rotulo, descricao) in _opcoes)
+            InkWell(
+              key: Key('tema-${modo.name}'),
+              borderRadius: BorderRadius.circular(12),
+              onTap: () async {
+                await ref
+                    .read(themeModeControllerProvider.notifier)
+                    .definir(modo);
+                if (context.mounted) Navigator.of(context).pop();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            rotulo,
+                            style: AppTypography.bodyEmphasis(
+                              context,
+                            ).copyWith(color: colors.textPrimary),
+                          ),
+                          Text(
+                            descricao,
+                            style: AppTypography.caption(
+                              context,
+                            ).copyWith(color: colors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (modo == atual)
+                      const Icon(
+                        LucideIcons.check,
+                        size: 20,
+                        color: AppColors.primary,
+                      ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
